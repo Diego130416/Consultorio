@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Registrar Paciente</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="messageBox" class="message" aria-live="polite" style="display:none"></div>
+
+  <header class="header">
+    <div class="brand">
+      <h1>Consultorio Médico</h1>
+      <p class="subtitle">Agenda e Historial de Pacientes</p>
+    </div>
+    <nav class="nav">
+      <a href="index.html" class="nav-link">Inicio</a>
+      <a href="paciente.html" class="nav-link active">Registrar Paciente</a>
+      <a href="historial.html" class="nav-link">Historial</a>
+      <a href="receta.html" class="nav-link">Receta</a>
+      <a href="pago.html" class="nav-link">Pago</a>
+      <a href="diagnostico.html" class="nav-link">Diagnóstico</a>
+      <a href="estudio.html" class="nav-link">Estudio</a>
+      <a href="reporte.html" class="nav-link">Reporte</a>
+      <a href="config.html" class="nav-link">Configuración</a>
+    </nav>
+  </header>
+
+  <main class="form-container">
+    <form id="patientForm" class="form card" autocomplete="off">
+      <fieldset>
+        <legend>Datos Personales</legend>
+        <div class="grid-3">
+          <label>Nombre(s)<input id="nombre" type="text" required /></label>
+          <label>Apellido Paterno<input id="paterno" type="text" required /></label>
+          <label>Apellido Materno<input id="materno" type="text" /></label>
+        </div>
+        <div class="grid-2">
+          <label>Fecha de Nacimiento<input id="birthdate" type="date" required /></label>
+          <label>Edad<input id="age" type="number" min="0" max="130" disabled style="background-color: #eee;" /></label>
+        </div>
+        <label>Sexo
+          <select id="sex">
+            <option value="">Seleccione</option>
+            <option>Masculino</option>
+            <option>Femenino</option>
+            <option>Otro</option>
+          </select>
+        </label>
+        <label>Teléfono<input id="phone" type="tel" /></label>
+        <label>RFC (Autogenerado)
+            <input id="rfc" type="text" disabled style="background-color: #eee; color: #555; text-transform: uppercase;" />
+        </label>
+      </fieldset>
+      <fieldset>
+        <legend>Antecedentes y Motivo de Consulta</legend>
+        <div class="group">
+          <div class="group-title">Alergias</div>
+          <div id="allergiesGroup" class="checkbox-group" role="group" aria-label="Alergias"></div>
+          <div id="allergiesOtherContainer" style="display:none;margin-top:8px"><input id="allergiesOther" placeholder="Especifique otras alergias" /></div>
+        </div>
+        <div class="group">
+          <div class="group-title">Enfermedades Crónicas</div>
+          <div id="chronicGroup" class="checkbox-group" role="group" aria-label="Enfermedades crónicas"></div>
+          <div id="chronicOtherContainer" style="display:none;margin-top:8px"><input id="chronicOther" placeholder="Especifique otra enfermedad crónica" /></div>
+        </div>
+        <div class="group">
+          <div class="group-title">Antecedentes Familiares</div>
+          <textarea id="familyHistory" placeholder="Ej: Padre con hipertensión, Madre con diabetes."></textarea>
+        </div>
+        
+        <div class="group">
+          <label>¿Ha tenido cirugías previas?
+            <select id="surgeriesToggle">
+              <option value="No">No</option>
+              <option value="Si">Sí</option>
+            </select>
+          </label>
+          <div id="surgeriesContainer" style="display:none; margin-top: 12px;">
+            <button type="button" id="addSurgeryBtn" class="btn" style="margin-top: 12px;">+ Añadir Cirugía</button>
+          </div>
+        </div>
+
+        <div class="group">
+          <div class="group-title">Medicación Actual</div>
+          <div id="medsGroup" class="checkbox-group" role="group" aria-label="Medicación"></div>
+          <div id="medsOtherContainer" style="display:none;margin-top:8px"><input id="medicationsOther" placeholder="Especifique otro medicamento" /></div>
+        </div>
+        <div class="group">
+          <div class="group-title">Motivo de la Consulta</div>
+          <textarea id="reason" required></textarea>
+        </div>
+        <div class="group">
+          <div class="group-title">Síntomas</div>
+          <textarea id="symptoms"></textarea>
+        </div>
+        <div class="group">
+          <label>¿Consume alguna sustancia?
+            <select id="substance">
+              <option value="">Seleccione</option>
+              <option value="No">No</option>
+              <option value="Si">Sí</option>
+            </select>
+          </label>
+          <div id="substanceOccasionalFields" style="display:none;margin-top:12px">
+            <div style="margin-bottom:6px"><strong>¿Qué sustancia?</strong><br/><input id="substanceName" placeholder="Ej: Alcohol, tabaco..." /></div>
+            <div><strong>Frecuencia</strong><br/><input id="substanceFreq" placeholder="Ej: 2 veces por semana" /></div>
+          </div>
+        </div>
+      </fieldset>
+      <div class="form-actions">
+        <button type="submit" class="btn primary">Guardar Paciente</button>
+        <button type="button" id="resetBtn" class="btn">Limpiar Formulario</button>
+      </div>
+    </form>
+  </main>
+
+  <div id="confirmModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-window">
+      <h3 id="confirmModalTitle">Confirmar Acción</h3>
+      <p id="confirmModalText"></p>
+      <div class="modal-actions">
+        <button id="confirmModalCancel" class="btn">Cancelar</button>
+        <button id="confirmModalOk" class="btn danger">Confirmar</button>
+      </div>
+    </div>
+  </div>
+  <div id="promptModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-window">
+      <h3 id="promptModalTitle">Ingrese un Valor</h3>
+      <p id="promptModalText"></p>
+      <input id="promptModalInput" type="text" />
+      <div class="modal-actions">
+        <button id="promptModalCancel" class="btn">Cancelar</button>
+        <button id="promptModalOk" class="btn primary">Aceptar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

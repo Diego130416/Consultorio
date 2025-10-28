@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Generar Receta Médica</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="messageBox" class="message" aria-live="polite" style="display:none"></div>
+
+  <header class="header">
+    <div class="brand">
+      <h1>Consultorio Médico</h1>
+      <p class="subtitle">Agenda e Historial de Pacientes</p>
+    </div>
+    <nav class="nav">
+      <a href="index.html" class="nav-link">Inicio</a>
+      <a href="paciente.html" class="nav-link">Registrar Paciente</a>
+      <a href="historial.html" class="nav-link">Historial</a>
+      <a href="receta.html" class="nav-link active">Receta</a>
+      <a href="pago.html" class="nav-link">Pago</a>
+      <a href="diagnostico.html" class="nav-link">Diagnóstico</a>
+      <a href="estudio.html" class="nav-link">Estudio</a>
+      <a href="reporte.html" class="nav-link">Reporte</a>
+      <a href="config.html" class="nav-link">Configuración</a>
+    </nav>
+  </header>
+
+  <main class="form-container">
+    <form id="prescriptionForm" class="card">
+      <fieldset>
+        <legend>Datos de la Receta</legend>
+        <label>Seleccionar Paciente
+          <select id="patientSelect" required>
+            <option value="">Cargando pacientes...</option>
+          </select>
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Medicamentos</legend>
+        <div id="medicationsContainer">
+        </div>
+        <button type="button" id="addMedicationBtn" class="btn" style="margin-top: 12px;">+ Añadir Medicamento</button>
+      </fieldset>
+      
+      <fieldset>
+        <legend>Recomendaciones Generales</legend>
+        <textarea id="recommendations" rows="4" placeholder="Ej. Reposo relativo por 3 días, aplicar hielo en la zona afectada..."></textarea>
+      </fieldset>
+      
+      <div class="form-actions">
+        <button type="submit" class="btn primary">Generar Vista Previa</button>
+      </div>
+    </form>
+  </main>
+
+  <div id="confirmModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-window">
+      <h3 id="confirmModalTitle">Confirmar Acción</h3>
+      <p id="confirmModalText"></p>
+      <div class="modal-actions">
+        <button id="confirmModalCancel" class="btn">Cancelar</button>
+        <button id="confirmModalOk" class="btn danger">Confirmar</button>
+      </div>
+    </div>
+  </div>
+  <div id="promptModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-window">
+      <h3 id="promptModalTitle">Ingrese un Valor</h3>
+      <p id="promptModalText"></p>
+      <input id="promptModalInput" type="text" />
+      <div class="modal-actions">
+        <button id="promptModalCancel" class="btn">Cancelar</button>
+        <button id="promptModalOk" class="btn primary">Aceptar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

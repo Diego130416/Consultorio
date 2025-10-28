@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Registrar Estudio Médico</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="messageBox" class="message" aria-live="polite" style="display:none"></div>
+
+  <header class="header">
+    <div class="brand">
+      <h1>Consultorio Médico</h1>
+      <p class="subtitle">Agenda e Historial de Pacientes</p>
+    </div>
+    <nav class="nav">
+      <a href="index.html" class="nav-link">Inicio</a>
+      <a href="paciente.html" class="nav-link">Registrar Paciente</a>
+      <a href="historial.html" class="nav-link">Historial</a>
+      <a href="receta.html" class="nav-link">Receta</a>
+      <a href="pago.html" class="nav-link">Pago</a>
+      <a href="diagnostico.html" class="nav-link">Diagnóstico</a>
+      <a href="estudio.html" class="nav-link active">Estudio</a>
+      <a href="reporte.html" class="nav-link">Reporte</a>
+      <a href="config.html" class="nav-link">Configuración</a>
+    </nav>
+  </header>
+
+  <main class="form-container">
+    <form id="studyForm" class="card">
+      <fieldset>
+        <legend>Datos del Estudio</legend>
+        <label>Paciente
+          <select id="patientSelect" required>
+            <option value="">Cargando pacientes...</option>
+          </select>
+        </label>
+        <label>Fecha del Estudio<input id="studyDate" type="date" required /></label>
+        <label>Tipo de Estudio<input id="studyType" type="text" placeholder="Ej. Radiografía AP y lateral de tobillo" required /></label>
+        <label>Parte del Cuerpo<input id="bodyPart" type="text" placeholder="Ej. Tobillo derecho" required /></label>
+      </fieldset>
+      <fieldset>
+        <legend>Hallazgos e Imágenes</legend>
+        <label>Interpretación / Hallazgos<textarea id="studyFindings" rows="6" placeholder="Describe los hallazgos relevantes del estudio..."></textarea></label>
+        <label>Subir Imágenes (máx. 4)
+            <input id="studyImages" type="file" accept="image/*" multiple />
+            <small style="color: var(--text-muted); margin-top: 4px; display: block;">Nota: Las imágenes pesadas pueden hacer lenta la aplicación.</small>
+        </label>
+        <div id="imagePreviews" style="display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;"></div>
+      </fieldset>
+      <div class="form-actions">
+        <button type="submit" class="btn primary">Guardar Estudio</button>
+      </div>
+    </form>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

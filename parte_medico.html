@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Generar Parte Médico</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="messageBox" class="message" aria-live="polite" style="display:none"></div>
+
+  <header class="header">
+    <div class="brand">
+      <h1>Consultorio Médico</h1>
+      <p class="subtitle">Agenda e Historial de Pacientes</p>
+    </div>
+    <nav class="nav">
+      <a href="index.html" class="nav-link">Inicio</a>
+      <a href="paciente.html" class="nav-link">Registrar Paciente</a>
+      <a href="historial.html" class="nav-link">Historial</a>
+      <a href="receta.html" class="nav-link">Receta</a>
+      <a href="diagnostico.html" class="nav-link">Diagnóstico</a>
+      <a href="estudio.html" class="nav-link">Estudio</a>
+      <a href="reporte.html" class="nav-link">Reporte</a>
+      <a href="config.html" class="nav-link">Configuración</a>
+    </nav>
+  </header>
+
+  <main class="form-container">
+    <form id="parteMedicoForm" class="card">
+      <fieldset>
+        <legend>Parte Médico</legend>
+        <h3 style="margin-top: 0;">Paciente: <span id="patientNameForParte">Cargando...</span></h3>
+        
+        <div class="group">
+          <label>Subjetivo (Síntomas referidos por el paciente)</label>
+          <textarea id="parteSubjetivo" rows="4" required></textarea>
+        </div>
+
+        <div class="group">
+          <label>Objetivo (Signos vitales, hallazgos de exploración)</label>
+          <textarea id="parteObjetivo" rows="4" required></textarea>
+        </div>
+
+        <div class="group">
+          <label>Análisis (Impresión diagnóstica)</label>
+          <textarea id="parteAnalisis" rows="4" required></textarea>
+        </div>
+
+        <div class="group">
+          <label>Plan (Tratamiento, estudios solicitados, próxima cita)</label>
+          <textarea id="partePlan" rows="4" required></textarea>
+        </div>
+      </fieldset>
+      
+      <div class="form-actions">
+        <button type="submit" class="btn primary">Guardar y Generar PDF</button>
+      </div>
+    </form>
+  </main>
+
+  <div id="confirmModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-window">
+      <h3 id="confirmModalTitle">Confirmar Acción</h3>
+      <p id="confirmModalText"></p>
+      <div class="modal-actions">
+        <button id="confirmModalCancel" class="btn">Cancelar</button>
+        <button id="confirmModalOk" class="btn danger">Confirmar</button>
+      </div>
+    </div>
+  </div>
+  <div id="promptModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-window">
+      <h3 id="promptModalTitle">Ingrese un Valor</h3>
+      <p id="promptModalText"></p>
+      <input id="promptModalInput" type="text" />
+      <div class="modal-actions">
+        <button id="promptModalCancel" class="btn">Cancelar</button>
+        <button id="promptModalOk" class="btn primary">Aceptar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

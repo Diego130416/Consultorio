@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Consultorio — Agenda</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* Ajustes específicos para igualar tamaño entre calendario y vista diaria.
+       Puedes mover estas reglas a styles.css si prefieres mantener todo en un solo archivo CSS. */
+
+    /* Contenedor principal: dos columnas iguales para calendario y dayview */
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      max-width: 1150px;
+      margin: 20px auto;
+      padding: 0 16px;
+      align-items: start;
+    }
+
+    /* Asegurar que ambas columnas tengan la misma altura visual */
+    aside.card, section.card {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-height: 560px; /* altura base igual */
+    }
+
+    /* Forzar que el calendario y la vista diaria utilicen todo el alto disponible */
+    .calendar-grid, .events-column {
+      height: calc(100% - 120px); /* deja espacio para encabezados y controles */
+      overflow: auto;
+    }
+
+    /* Mantener la cabecera y controles con altura fija para cálculo consistente */
+    .month-controls, .dayview-header {
+      flex: 0 0 auto;
+    }
+
+    /* Aseguramos que la tarjeta no crezca en exceso en pantallas grandes */
+    @media (min-width: 1400px) {
+      .container { max-width: 1200px; }
+      aside.card, section.card { min-height: 620px; }
+      .calendar-grid, .events-column { height: calc(100% - 140px); }
+    }
+
+    /* Colapsar a una columna en pantallas pequeñas (manteniendo la proporcionalidad) */
+    @media (max-width: 980px) {
+      .container {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+      .calendar-grid, .events-column {
+        height: auto;
+        max-height: none;
+      }
+      aside.card, section.card { min-height: auto; }
+    }
+
+    /* Ajuste visual menor: centrar el contenido del contenedor de estadísticas */
+    .mini-stats { display:flex; flex-direction:column; gap:8px; }
+    .stat.full-width { display:block; }
+
+    /* Asegurar que los elementos internos usen box-sizing consistente */
+    .calendar-grid .cell { box-sizing: border-box; }
+  </style>
+</head>
+<body>
+  <div id="messageBox" class="message" aria-live="polite" style="display:none"></div>
+
+  <header class="header">
+    <div class="brand">
+      <h1>Consultorio Médico</h1>
+      <p class="subtitle">Agenda e Historial de Pacientes</p>
+    </div>
+    <nav class="nav">
+      <a href="index.html" class="nav-link active">Inicio</a>
+      <a href="paciente.html" class="nav-link">Registrar Paciente</a>
+      <a href="historial.html" class="nav-link">Historial</a>
+      <a href="receta.html" class="nav-link">Receta</a>
+      <a href="pago.html" class="nav-link">Pago</a>
+      <a href="diagnostico.html" class="nav-link">Diagnóstico</a>
+      <a href="estudio.html" class="nav-link">Estudio</a>
+      <a href="reporte.html" class="nav-link">Reporte</a>
+      <a href="config.html" class="nav-link">Configuración</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <aside class="card">
+      <div class="sidebar-top">
+        <div class="month-controls">
+          <button id="prevMonth" class="icon-btn" aria-label="Mes anterior">‹</button>
+          <div class="month-info-vertical">
+            <div id="monthLabel" class="month-label">Mes</div>
+            <div id="yearLabel" class="year-label">Año</div>
+          </div>
+          <button id="nextMonth" class="icon-btn" aria-label="Mes siguiente">›</button>
+        </div>
+
+        <div class="mini-stats">
+          <div class="stat-group">
+            <div class="stat"><strong id="todayCount">0</strong><span>Citas de Hoy</span></div>
+            <div class="stat"><strong id="blockedCount">0</strong><span>Bloqueados</span></div>
+          </div>
+          <div class="stat full-width">
+            <strong>Siguiente Cita:</strong>
+            <span id="nextAppt">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="weekday-row" role="row">
+        <div>Dom</div><div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sab</div>
+      </div>
+
+      <div id="calendar" class="calendar-grid compact" role="grid" aria-label="Calendario"></div>
+    </aside>
+
+    <section class="card">
+      <div class="dayview-header">
+        <div>
+          <h2 id="selectedDateLabel">Seleccione una fecha</h2>
+          <div id="daySubtitle" class="subtitle">Vista diaria</div>
+        </div>
+      </div>
+
+      <div id="dayView" class="dayview" aria-live="polite">
+        <div id="eventsColumn" class="events-column">
+          <div class="empty">Selecciona una fecha en el calendario para ver los horarios disponibles.</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="quickModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="quickModalTitle">
+    <div class="modal-window">
+      <button id="closeQuickModal" class="close-btn" aria-label="Cerrar">×</button>
+      <h3 id="quickModalTitle">Agendar Cita</h3>
+      <p>Ingresa el nombre completo del paciente. Si el paciente ya existe, se usará su registro. Si no, se creará uno nuevo.</p>
+      <label class="modal-label">Nombre del paciente</label>
+      <input id="quickModalInput" type="text" placeholder="Ej. Juan Pérez" />
+      <div class="modal-actions">
+        <button id="quickModalCancel" class="btn">Cancelar</button>
+        <button id="quickModalOk" class="btn primary">Agendar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="confirmModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-window">
+      <h3 id="confirmModalTitle">Confirmar Acción</h3>
+      <p id="confirmModalText"></p>
+      <div class="modal-actions">
+        <button id="confirmModalCancel" class="btn">Cancelar</button>
+        <button id="confirmModalOk" class="btn danger">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+<div id="promptModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-window">
+      <h3 id="promptModalTitle">Ingrese un Valor</h3>
+      <p id="promptModalText"></p>
+      <input id="promptModalInput" type="text" />
+      <div class="modal-actions">
+        <button id="promptModalCancel" class="btn">Cancelar</button>
+        <button id="promptModalOk" class="btn primary">Aceptar</button>
+      </div>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

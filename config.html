@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Configuración</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="messageBox" class="message" aria-live="polite" style="display:none"></div>
+
+  <header class="header">
+    <div class="brand">
+      <h1>Consultorio Médico</h1>
+      <p class="subtitle">Agenda e Historial de Pacientes</p>
+    </div>
+    <nav class="nav">
+      <a href="index.html" class="nav-link">Inicio</a>
+      <a href="paciente.html" class="nav-link">Registrar Paciente</a>
+      <a href="historial.html" class="nav-link">Historial</a>
+      <a href="receta.html" class="nav-link">Receta</a>
+      <a href="pago.html" class="nav-link">Pago</a>
+      <a href="diagnostico.html" class="nav-link">Diagnóstico</a>
+      <a href="estudio.html" class="nav-link">Estudio</a>
+      <a href="reporte.html" class="nav-link">Reporte</a>
+      <a href="config.html" class="nav-link active">Configuración</a>
+    </nav>
+  </header>
+
+  <main class="form-container">
+    <div class="card">
+      <h3>Configuración de Firma</h3>
+      <p>Sube una imagen de tu firma (formato PNG con fondo transparente es ideal). Se guardará localmente en tu navegador.</p>
+      
+      <div id="signaturePreviewContainer" style="margin-top: 1rem; border: 1px dashed #ccc; padding: 1rem; text-align: center; display: none;">
+        <h4>Firma Actual:</h4>
+        <img id="signaturePreview" src="" alt="Vista previa de la firma" style="max-height: 100px; max-width: 100%;" />
+      </div>
+
+      <label style="margin-top: 1.5rem;">Seleccionar archivo de imagen:
+        <input id="signatureUpload" type="file" accept="image/png, image/jpeg" />
+      </label>
+
+      <div class="form-actions">
+        <button id="saveSignatureBtn" class="btn primary">Guardar Firma</button>
+        <button id="deleteSignatureBtn" class="btn danger">Eliminar Firma</button>
+      </div>
+    </div>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
