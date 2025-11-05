@@ -296,6 +296,7 @@ function updateDashboardStats() {
   }
 
 // ---------- MÓDULO: FORMULARIO DE PACIENTE (MODIFICADO) ----------
+// ---------- REEMPLAZA ESTA FUNCIÓN COMPLETA en app.js ----------
   function initPatientForm() {
     const form = $('patientForm');
     if (!form) return;
@@ -306,7 +307,7 @@ function updateDashboardStats() {
     bindNoneBehavior('chronicGroup');
     bindNoneBehavior('medsGroup');
 
-    // --- AÑADIDO: Lógica para autogenerar RFC y Edad ---
+    // --- Lógica para autogenerar RFC y Edad ---
     const rfcInput = $('rfc');
     const nombreInput = $('nombre');
     const paternoInput = $('paterno');
@@ -314,7 +315,7 @@ function updateDashboardStats() {
     const birthdateInput = $('birthdate');
     const ageInput = $('age');
     
-    if (ageInput) ageInput.disabled = true; // Deshabilitar campo de edad
+    if (ageInput) ageInput.disabled = true;
 
     const updateDynamicFields = () => {
         const nombre = nombreInput.value;
@@ -322,11 +323,9 @@ function updateDashboardStats() {
         const materno = maternoInput.value;
         const birthdate = birthdateInput.value;
         
-        // Generar y mostrar RFC
         const rfc = generateRFC(nombre, paterno, materno, birthdate);
         rfcInput.value = rfc;
         
-        // Calcular y mostrar Edad
         const age = calculateAge(birthdate);
         ageInput.value = age;
     };
@@ -334,7 +333,6 @@ function updateDashboardStats() {
     [nombreInput, paternoInput, maternoInput, birthdateInput].forEach(el => {
         el?.addEventListener('input', updateDynamicFields);
     });
-    // --- Fin de lógica RFC y Edad ---
 
     const bindOtherFieldVisibility = (groupId, containerId) => {
         const group = $(groupId);
@@ -431,16 +429,16 @@ function updateDashboardStats() {
       if (p.age) $('age').value = p.age;
       if (p.sex) $('sex').value = p.sex;
       if (p.birthdate) $('birthdate').value = p.birthdate;
-      if (p.phone) $('phone').value = p.phone;
+       if (p.phone) $('phone').value = p.phone;
       if (p.rfc) $('rfc').value = p.rfc;
       if (p.familyHistory) $('familyHistory').value = p.familyHistory;
 
-      // Calcular edad al cargar
       if (p.birthdate) ageInput.value = calculateAge(p.birthdate);
 
         if (surgeriesToggle && Array.isArray(p.surgeries) && p.surgeries.length > 0) {
             surgeriesToggle.value = 'Si';
             surgeriesContainer.style.display = 'block';
+image_c74c34.png
             p.surgeries.forEach(surgery => addSurgeryBlock(surgery));
         } else if (surgeriesToggle) {
             surgeriesToggle.value = 'No';
@@ -467,7 +465,7 @@ function updateDashboardStats() {
             
             if (customValue) {
                 const group = $(groupId);
-                const container = $(containerId);
+               const container = $(containerId);
                 const input = $(inputId);
                 const otroCheckbox = group.querySelector('input[value="Otro"]');
                 if (otroCheckbox) {
@@ -480,7 +478,7 @@ function updateDashboardStats() {
         };
 
         populateOtherField(p.allergies, ALL_ALERGIES, 'allergiesGroup', 'allergiesOtherContainer', 'allergiesOther');
-        populateOtherField(p.chronic, ALL_CHRONIC, 'chronicGroup', 'chronicOtherContainer', 'chronicOther');
+         populateOtherField(p.chronic, ALL_CHRONIC, 'chronicGroup', 'chronicOtherContainer', 'chronicOther');
         populateOtherField(p.medications, ALL_MEDICATIONS, 'medsGroup', 'medsOtherContainer', 'medicationsOther');
       
       if (p.substance) {
@@ -488,7 +486,7 @@ function updateDashboardStats() {
         if ((p.substance === 'Si') && substanceFields) {
           substanceFields.style.display = 'block';
           $('substanceName').value = p.substanceDetail?.name || '';
-          $('substanceFreq').value = p.substanceDetail?.frequency || '';
+           $('substanceFreq').value = p.substanceDetail?.frequency || '';
         } else if (substanceFields) substanceFields.style.display = 'none';
       }
       form.addEventListener('submit', function updateHandler(e) {
@@ -511,11 +509,20 @@ function updateDashboardStats() {
         const rfc = generateRFC(nombre, paterno, materno, birthdate);
         const age = calculateAge(birthdate);
 
+        // --- AÑADIDO: Validación de Teléfono ---
+        const phoneInput = $('phone');
+        if (phoneInput.value && !/^[0-9]{10}$/.test(phoneInput.value)) {
+            showMessage('El número de teléfono debe tener 10 dígitos.', 'warning');
+            phoneInput.focus();
+            return;
+        }
+        // --- FIN DE AÑADIDO ---
+
         const updated = { ...db2.patients[idx], 
             nombre, paterno, materno, fullName, rfc, age,
             sex: $('sex').value || null, 
             birthdate: birthdate || null, 
-            phone: $('phone').value.trim() || null, 
+            phone: phoneInput.value.trim() || null, 
             allergies: collectGroup('allergiesGroup','allergiesOther'), 
             chronic: collectGroup('chronicGroup','chronicOther'), 
             surgeries: collectSurgeries(), 
@@ -558,12 +565,21 @@ function updateDashboardStats() {
         return;
       }
 
+      // --- AÑADIDO: Validación de Teléfono ---
+      const phoneInput = $('phone');
+      if (phoneInput.value && !/^[0-9]{10}$/.test(phoneInput.value)) {
+          showMessage('El número de teléfono debe tener 10 dígitos.', 'warning');
+          phoneInput.focus();
+          return;
+      }
+      // --- FIN DE AÑADIDO ---
+
       const patient = { 
         id: randId('p'), 
         nombre, paterno, materno, fullName, rfc, age,
         sex: $('sex').value || null, 
         birthdate: birthdate || null, 
-        phone: $('phone').value.trim() || null, 
+        phone: phoneInput.value.trim() || null, 
         allergies: collectGroup('allergiesGroup','allergiesOther'), 
         chronic: collectGroup('chronicGroup','chronicOther'), 
         surgeries: collectSurgeries(), 
@@ -591,7 +607,7 @@ function updateDashboardStats() {
     $('resetBtn')?.addEventListener('click', () => {
       form.reset();
       ['allergiesOtherContainer','chronicOtherContainer','medsOtherContainer','substanceOccasionalFields'].forEach(id => { const el = $(id); if (el) el.style.display = 'none'; });
-      if (surgeriesToggle) {
+        if (surgeriesToggle) {
         surgeriesToggle.value = 'No';
         surgeriesContainer.style.display = 'none';
         surgeriesContainer.querySelectorAll('.surgery-group').forEach(group => group.remove());
@@ -1416,6 +1432,19 @@ function reprintStudy(patientId, historyId) {
     generateStudyPrintWindow(patient, historyEvent.data);
 }
 
+function reprintParteMedico(patientId, historyId) {
+    const db = loadDB();
+    const patient = db.patients.find(p => p.id === patientId);
+    const history = (db.histories[patientId] || []);
+    const historyEvent = history.find(h => h.id === historyId);
+
+    if (!patient || !historyEvent) {
+        showMessage('No se pudo encontrar el parte médico en el historial.', 'error');
+        return;
+    }
+    generateParteMedicoPrintWindow(patient, historyEvent.data);
+}
+
 function reprintPayment(patientId, historyId) {
     const db = loadDB();
     const patient = db.patients.find(p => p.id === patientId);
@@ -1805,140 +1834,246 @@ function initRecetaPage() {
     });
 }
 
+// ---------- MÓDULO DE REPORTES (MODIFICADO) ----------
+// ---------- REEMPLAZA ESTA FUNCIÓN COMPLETA en app.js ----------
 function initReportPage() {
-    const btnReportePagos = $('btnReportePagos');
-    const btnReporteCitas = $('btnReporteCitas');
-    const btnReporteRecetas = $('btnReporteRecetas');
-    const resultContainer = $('reportResultContainer');
-    
-    if (!btnReportePagos) return; // Salir si no estamos en la página de reportes
+    const btnReportePagos = $('btnReportePagos');
+    const btnReporteCitas = $('btnReporteCitas');
+    const btnReporteRecetas = $('btnReporteRecetas');
+    const resultContainer = $('reportResultContainer');
+    
+    if (!btnReportePagos) return; 
 
-    const db = loadDB();
-    const allPatients = db.patients;
-    const allHistories = db.histories;
+    const db = loadDB();
+    const allPatients = db.patients;
+    const allHistories = db.histories;
 
-    /**
-     * Función interna para mostrar el contenido del reporte y el botón de imprimir.
-     * @param {string} title - Título del reporte (para impresión).
-     * @param {string} contentHtml - El HTML del contenido del reporte.
-     */
-    function displayReport(title, contentHtml) {
-        resultContainer.innerHTML = `
-            <button type="button" id="btnPrintCurrentReport" class="btn primary" style="float: right;">Imprimir</button>
-            <h4 style="margin-top: 0;">${title}</h4>
-            <div id="reportContentToPrint">
-                ${contentHtml}
-            </div>
-        `;
+    // --- Helpers de fecha (para formato de semana) ---
+    function getStartDateOfISOWeek(year, week) {
+        let d = new Date(Date.UTC(year, 0, 4));
+        d.setUTCDate(d.getUTCDate() - (d.getUTCDay() || 7) + 1);
+        d.setUTCDate(d.getUTCDate() + (week - 1) * 7);
+        return d;
+    }
+    function getEndDateOfISOWeek(startDate) {
+        let d = new Date(startDate);
+        d.setUTCDate(d.getUTCDate() + 6);
+        return d;
+    }
+    function formatReportKey(key, title) {
+        try {
+            if (title.includes('Mes')) {
+                const date = new Date(key.replace(/-/g, '/') + '/02');
+                const monthName = date.toLocaleString('es-ES', { month: 'long', timeZone: 'UTC' });
+                const formattedMonth = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+                return `${formattedMonth} ${date.getFullYear()}`;
+            }
+            if (title.includes('Semana')) {
+                const [year, weekNum] = key.split('-S');
+                const startDate = getStartDateOfISOWeek(parseInt(year), parseInt(weekNum));
+                const endDate = getEndDateOfISOWeek(startDate);
+                const options = { month: 'short', day: 'numeric', timeZone: 'UTC' };
+                const startStr = startDate.toLocaleDateString('es-ES', options);
+                const endStr = endDate.toLocaleDateString('es-ES', options);
+                return `Semana ${weekNum} (${startStr} - ${endStr}, ${year})`;
+            }
+            if (title.includes('Día')) {
+                const date = new Date(key.replace(/-/g, '/'));
+                return date.toLocaleDateString('es-ES', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    timeZone: 'UTC'
+                });
+            }
+        } catch (e) {
+            console.error("Error formateando clave de reporte:", e);
+            return key;
+        }
+        return key;
+    }
+    // --- Fin Helpers de fecha ---
 
-        // Añadir listener al nuevo botón de imprimir
-        $('btnPrintCurrentReport').addEventListener('click', () => {
-            const reportContent = $('reportContentToPrint').innerHTML;
-            const printHeader = getPrintHeader();
-            const printFooter = getPrintFooter();
-            
-            // Usamos un paciente "genérico" para la impresión, ya que es un reporte general
-            const fakePatient = { fullName: "Reporte General", name: "Reporte General" }; 
-            
-            // Llamamos a openPrintPreview con los datos
-            openPrintPreview(title, printHeader + reportContent + printFooter);
-        });
-    }
+    function displayReport(title, contentHtml) {
+        resultContainer.innerHTML = `
+            <button type="button" id="btnPrintCurrentReport" class="btn primary" style="float: right;">Imprimir</button>
+            <div id="reportContentToPrint">
+                ${contentHtml}
+            </div>
+        `;
+        $('btnPrintCurrentReport').addEventListener('click', () => {
+            const reportContent = $('reportContentToPrint').innerHTML;
+            const printHeader = getPrintHeader();
+            const printFooter = getPrintFooter();
+            const fakePatient = { fullName: "Reporte General", name: "Reporte General" }; 
+            openPrintPreview(title, printHeader + reportContent + printFooter);
+        });
+    }
 
-    // --- Reporte 1: Pagos y Facturación ---
-    btnReportePagos.addEventListener('click', () => {
-        let html = '';
-        let hasEntries = false;
-        
-        allPatients.forEach(patient => {
-            const payments = (allHistories[patient.id] || []).filter(h => h.type === 'Registro de Pago');
-            if (payments.length > 0) {
-                hasEntries = true;
-                html += `<h5>${patient.fullName || patient.name}</h5>`;
-                html += '<ul>';
-                payments.forEach(p => {
-                    const data = p.data;
-                    let facturacionStatus = '';
-                    if (data.method === 'Efectivo') {
-                        facturacionStatus = '<span style="color: #888;">No se puede facturar (pago en efectivo)</span>';
-                    } else {
-                        if (data.facturado) {
-                            facturacionStatus = data.facturaEmitida 
-                                ? '<span style="color: green;">Facturado (Factura Emitida)</span>' 
-                                : '<span style="color: orange;">Facturado (Pendiente de Emisión)</span>';
-                        } else {
-                            facturacionStatus = '<span style="color: red;">No Facturado</span>';
-                        }
-                    }
-                    html += `<li>$${data.amount} (${data.method}) - ${facturacionStatus}</li>`;
-                });
-                html += '</ul>';
-            }
-        });
-        
-        if (!hasEntries) {
-            html += '<p>No se encontraron registros de pago.</p>';
-        }
-        displayReport('Reporte de Pagos y Facturación', html);
-    });
+// --- Reporte 1: Pagos y Facturación (con nombres resaltados) ---
+    btnReportePagos.addEventListener('click', () => {
+        let html = '';
+        let hasEntries = false;
+        
+        allPatients.forEach(patient => {
+            const payments = (allHistories[patient.id] || []).filter(h => h.type === 'Registro de Pago');
+            if (payments.length > 0) {
+                hasEntries = true;
+                html += `<h4 style="font-size: 1.1em; margin-top: 1rem; border-bottom: 1px solid #eee; padding-bottom: 5px;">${patient.fullName || patient.name}</h4>`;
+                html += '<ul>';
+                payments.forEach(p => {
+                    const data = p.data;
+                    const fechaPago = new Date(p.timestamp).toLocaleDateString('es-ES');
+                    let facturacionStatus = '';
+                    if (data.method === 'Efectivo') {
+                        facturacionStatus = '<span style="color: #888;">No se puede facturar (pago en efectivo)</span>';
+                    } else {
+                        if (data.facturado) { 
+                            facturacionStatus = data.facturaEmitida 
+                                ? '<span style="color: green;">Facturado (Factura Emitida)</span>' 
+                                : '<span style="color: orange;">Facturado (Pendiente de Emisión)</span>';
+                        } else {
+                            facturacionStatus = '<span style="color: red;">No Facturado</span>';
+                        }
+                    }
+                    html += `<li><strong>${fechaPago}:</strong> $${data.amount} (${data.method}) - ${facturacionStatus}</li>`;
+                });
+                html += '</ul>';
+            }
+        });
+        
+        if (!hasEntries) {
+            html += '<p>No se encontraron registros de pago.</p>';
+        }
+        displayReport('Reporte de Pagos y Facturación', html);
+    });
 
-    // --- Reporte 2: Citas ---
-    btnReporteCitas.addEventListener('click', () => {
-        const periodo = $('reporteCitasPeriodo').value;
-        const now = new Date();
-        let limitDate = new Date(0); // Fecha muy antigua (para 'general')
+// --- Reporte 2: Citas (con lista de pacientes por día) ---
+    btnReporteCitas.addEventListener('click', () => {
+        const periodo = $('reporteCitasPeriodo').value;
+        const now = new Date();
+        let limitDate = new Date(0);
 
-        if (periodo === 'mensual') {
-            limitDate.setDate(now.getDate() - 30);
-        } else if (periodo === 'semanal') {
-            limitDate.setDate(now.getDate() - 7);
-        }
+        if (periodo === 'mensual') {
+            limitDate = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+        } else if (periodo === 'semanal') {
+            limitDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7);
+        }
 
-        let html = '';
-        let appointments = db.appointments
-            .filter(a => new Date(a.date) >= limitDate)
-            .sort((a,b) => new Date(a.date) - new Date(b.date));
-        
-        if (appointments.length > 0) {
-            html += '<ul>';
-            appointments.forEach(appt => {
-                const patient = allPatients.find(p => p.id === appt.patientId);
-                const patientName = patient ? (patient.fullName || patient.name) : 'Paciente Desconocido';
-                html += `<li><strong>${appt.date}</strong> - ${patientName}</li>`;
-            });
-            html += '</ul>';
-        } else {
-            html += '<p>No se encontraron citas en este periodo.</p>';
-        }
-        displayReport(`Reporte de Citas (${periodo})`, html);
-    });
+        const appointments = db.appointments.filter(a => new Date(a.date.replace(/-/g, '/')) >= limitDate);
+        
+        // --- ESTRUCTURAS DE DATOS MODIFICADAS ---
+        const apptsByDay = {}; // Guardará la lista de pacientes
+        const countsByWeek = {}; // Sigue siendo un conteo
+        const countsByMonth = {}; // Sigue siendo un conteo
 
-    // --- Reporte 3: Recetas ---
-    btnReporteRecetas.addEventListener('click', () => {
-        let html = '';
-        let hasEntries = false;
+        const getWeekKey = (d) => {
+            d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+            d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+            var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+            var weekNo = Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
+            return `${d.getUTCFullYear()}-S${String(weekNo).padStart(2, '0')}`;
+        };
 
-        allPatients.forEach(patient => {
-            const prescriptions = (allHistories[patient.id] || []).filter(h => h.type === 'Receta emitida');
-            if (prescriptions.length > 0) {
-                hasEntries = true;
-                html += `<h5>${patient.fullName || patient.name}</h5>`;
-                prescriptions.forEach(p => {
-                    const data = p.data;
-                    const meds = data.medications.map(m => m.name).join(', ');
-                    html += `<ul style="font-size: 0.9em;">
-                                <li><strong>Medicamentos:</strong> ${meds}</li>
-                                <li><strong>Recomendaciones:</strong> ${data.recommendations || 'Ninguna'}</li>
-                             </ul>`;
-                });
-            }
-        });
-        
-        if (!hasEntries) {
-            html += '<p>No se encontraron recetas emitidas.</p>';
-        }
-        displayReport('Reporte de Recetas por Paciente', html);
-    });
+        // --- LÓGICA DE AGREGACIÓN MODIFICADA ---
+        for (const appt of appointments) {
+            const d = new Date(appt.date.replace(/-/g, '/'));
+            const dayKey = appt.date;
+            const weekKey = getWeekKey(d);
+            const monthKey = appt.date.substring(0, 7);
+
+            // MODIFICADO: Guarda el paciente y la hora para el desglose por día
+            const patient = allPatients.find(p => p.id === appt.patientId);
+            const patientName = patient ? (patient.fullName || patient.name) : 'Paciente Desconocido';
+            if (!apptsByDay[dayKey]) apptsByDay[dayKey] = [];
+            apptsByDay[dayKey].push({ time: appt.time, name: patientName });
+
+            // SIN CAMBIOS: Sigue contando para semana y mes
+            countsByWeek[weekKey] = (countsByWeek[weekKey] || 0) + 1;
+            countsByMonth[monthKey] = (countsByMonth[monthKey] || 0) + 1;
+        }
+
+        let html = `<h4>Reporte de Citas (${periodo})</h4>`;
+        html += `<p><strong>Total de Citas en el Periodo: ${appointments.length}</strong></p>`;
+
+        // --- FUNCIÓN createList MODIFICADA ---
+        // Ahora maneja dos tipos de datos: un conteo (para Mes/Semana) o una lista de citas (para Día)
+        const createList = (title, data) => {
+            let listHtml = `<h5>${title}</h5>`;
+            const sortedKeys = Object.keys(data).sort().reverse();
+            if (sortedKeys.length === 0) return '';
+            
+            listHtml += '<ul>';
+            for (const key of sortedKeys) {
+                const formattedKey = formatReportKey(key, title);
+                
+                if (title.includes('Día')) {
+                    // 'data[key]' es una lista de citas: [{time: '10:00', name: '...'}, ...]
+                    const apptList = data[key].sort((a, b) => a.time.localeCompare(b.time));
+                    const count = apptList.length;
+                    listHtml += `<li><strong>${formattedKey}:</strong> ${count} cita(s)</li>`;
+                    
+                    // Añade la sub-lista de pacientes
+                    listHtml += '<ul style="font-size: 0.9em; margin-left: 20px; list-style-type: disc; margin-top: 5px; margin-bottom: 10px;">';
+                    for (const appt of apptList) {
+                        listHtml += `<li>${appt.time} - ${appt.name}</li>`;
+                    }
+                    listHtml += '</ul>';
+
+                } else {
+                    // 'data[key]' es solo un número (conteo)
+                    const count = data[key];
+                    listHtml += `<li><strong>${formattedKey}:</strong> ${count} citas</li>`;
+                }
+            }
+            listHtml += '</ul>';
+            return listHtml;
+        };
+
+        // --- LLAMADAS A createList MODIFICADAS ---
+        // Se pasan las estructuras de datos correctas a cada llamada
+        if (periodo === 'semanal') {
+            html += createList('Desglose por Día', apptsByDay);
+        } else if (periodo === 'mensual') {
+            html += createList('Desglose por Semana', countsByWeek);
+            html += createList('Desglose por Día', apptsByDay);
+        } else if (periodo === 'general') {
+            html += createList('Desglose por Mes', countsByMonth);
+            html += createList('Desglose por Semana', countsByWeek);
+        }
+        
+        displayReport(`Reporte de Citas (${periodo})`, html);
+    });
+
+// --- Reporte 3: Recetas (con nombres resaltados) ---
+    btnReporteRecetas.addEventListener('click', () => {
+        let html = '';
+        let hasEntries = false;
+
+        allPatients.forEach(patient => {
+            const prescriptions = (allHistories[patient.id] || []).filter(h => h.type === 'Receta emitida');
+            if (prescriptions.length > 0) {
+                hasEntries = true;
+                html += `<h4 style="font-size: 1.1em; margin-top: 1rem; border-bottom: 1px solid #eee; padding-bottom: 5px;">${patient.fullName || patient.name}</h4>`;
+                prescriptions.forEach(p => {
+                    const data = p.data;
+                    const meds = data.medications.map(m => m.name).join(', ');
+                    const fechaReceta = new Date(p.timestamp).toLocaleDateString('es-ES');
+                    
+                    html += `<ul style="font-size: 0.9em;">
+                                <li><strong>Fecha:</strong> ${fechaReceta}</li>
+                                <li><strong>Medicamentos:</strong> ${meds}</li>
+                                <li><strong>Recomendaciones:</strong> ${data.recommendations || 'Ninguna'}</li>
+                             </ul>`;
+                });
+            }
+        });
+        
+        if (!hasEntries) {
+            html += '<p>No se encontraron recetas emitidas.</p>';
+        }
+        displayReport('Reporte de Recetas por Paciente', html);
+    });
 }
 
   function initConfigPage() {
@@ -2380,8 +2515,19 @@ function initParteMedicoPage() {
     if (!form) return;
     
     const params = new URL(window.location.href).searchParams;
-    const patientId = params.get('pid');
+    let patientId = params.get('pid');
     const editHistoryId = params.get('edit_hid');
+
+    // Si estamos editando y no viene pid, buscarlo
+    if (editHistoryId && !patientId) {
+        const dbFind = loadDB();
+        for (const pId in dbFind.histories) {
+            if (dbFind.histories[pId].find(h => h.id === editHistoryId)) {
+                patientId = pId;
+                break;
+            }
+        }
+    }
     
     if (!patientId) {
         form.innerHTML = '<h2>Paciente no especificado</h2>';
@@ -2397,7 +2543,7 @@ function initParteMedicoPage() {
     }
 
     const patientNameEl = $('patientNameForParte');
-    if(patientNameEl) patientNameEl.textContent = patient.name;
+    if(patientNameEl) patientNameEl.textContent = patient.fullName || patient.name;
     
     // MODO EDICIÓN: Cargar datos existentes
     if (editHistoryId) {
@@ -2405,15 +2551,66 @@ function initParteMedicoPage() {
         const history = db.histories[patientId] || [];
         const historyEvent = history.find(h => h.id === editHistoryId);
         if (historyEvent && historyEvent.type === 'Parte Médico') {
-            $('parteAnalisis').value = historyEvent.data.analysis || '';
+            const data = historyEvent.data;
+            $('fechaConsulta').value = data.fechaConsulta || '';
+            $('motivoConsulta').value = data.motivoConsulta || '';
+            $('antecedentesResumen').value = data.antecedentesResumen || '';
+            $('exploracionFisica').value = data.exploracionFisica || '';
+            $('pruebasComplementarias').value = data.pruebasComplementarias || '';
+            $('diagnostico').value = data.diagnostico || '';
+            $('tratamiento').value = data.tratamiento || '';
         }
+    } else {
+        // MODO CREACIÓN: Poner fecha de hoy y pre-llenar campos
+        $('fechaConsulta').value = new Date().toISOString().slice(0, 10);
+
+        // --- INICIO DE CÓDIGO AÑADIDO (PRE-LLENADO) ---
+
+        // 1. Pre-llenar Motivo de la Consulta
+        if (patient.reason) {
+            $('motivoConsulta').value = patient.reason;
+        }
+
+        // 2. Construir y pre-llenar el Resumen de Antecedentes
+        let antecedentes = '';
+        if (patient.allergies && patient.allergies.length > 0 && !patient.allergies.includes('Ninguna')) {
+            antecedentes += `ALERGIAS: ${patient.allergies.join(', ')}\n\n`;
+        }
+        if (patient.chronic && patient.chronic.length > 0 && !patient.chronic.includes('Ninguna')) {
+            antecedentes += `ENFERMEDADES CRÓNICAS: ${patient.chronic.join(', ')}\n\n`;
+        }
+        if (patient.medications && patient.medications.length > 0 && !patient.medications.includes('Ninguna')) {
+            antecedentes += `MEDICACIÓN ACTUAL: ${patient.medications.join(', ')}\n\n`;
+        }
+        if (patient.surgeries && patient.surgeries.length > 0) {
+            antecedentes += 'CIRUGÍAS PREVIAS:\n';
+            patient.surgeries.forEach(s => {
+                antecedentes += `- ${s.procedure || 'N/A'} (${s.date || 'Fecha N/A'})\n`;
+            });
+            antecedentes += '\n';
+        }
+        if (patient.familyHistory) {
+            antecedentes += `ANTECEDENTES FAMILIARES: ${patient.familyHistory}\n`;
+        }
+        
+        $('antecedentesResumen').value = antecedentes.trim();
+        
+        // --- FIN DE CÓDIGO AÑADIDO ---
     }
 
     form.addEventListener('submit', e => {
         e.preventDefault();
+        
+        // Recolectar todos los datos nuevos
         const parteData = {
             id: editHistoryId ? (db.histories[patientId].find(h => h.id === editHistoryId)?.data.id || randId('pm')) : randId('pm'),
-            analysis: $('parteAnalisis').value,
+            fechaConsulta: $('fechaConsulta').value,
+            motivoConsulta: $('motivoConsulta').value,
+            antecedentesResumen: $('antecedentesResumen').value,
+            exploracionFisica: $('exploracionFisica').value,
+            pruebasComplementarias: $('pruebasComplementarias').value,
+            diagnostico: $('diagnostico').value,
+            tratamiento: $('tratamiento').value,
             createdAt: nowISO()
         };
 
@@ -2438,15 +2635,231 @@ function initParteMedicoPage() {
         saveDB(db_to_save);
         showMessage('Parte Médico guardado.', 'success');
         generateParteMedicoPrintWindow(patient, parteData);
-        
+
         if (!editHistoryId) {
-            form.reset();
+            // Limpiar solo los campos de esta consulta, no los pre-llenados
+            $('exploracionFisica').value = '';
+            $('pruebasComplementarias').value = '';
+            $('diagnostico').value = '';
+            $('tratamiento').value = '';
+            // Opcional: limpiar también motivo y antecedentes si prefieres
+            // $('motivoConsulta').value = '';
+            // $('antecedentesResumen').value = '';
         } else {
              setTimeout(() => {
                 window.location.href = `paciente_full.html?pid=${patientId}`;
             }, 1000);
         }
     });
+}
+
+// ---------- REEMPLAZA ESTA FUNCIÓN COMPLETA en app.js (la última definición) ----------
+// ---------- REEMPLAZA LA *ÚLTIMA* FUNCIÓN initPatientDetailPage() EN app.js CON ESTO ----------
+function initPatientDetailPage() {
+    const patientNameHeader = $('patientNameHeader');
+    const patientInfoEl = $('patientInfo');
+    const patientHistoryEl = $('patientHistory');
+    const editPatientLink = $('editPatientLink');
+    const createParteMedicoLink = $('createParteMedicoLink');
+    const createReportLink = $('createReportLink');
+    const printHistoryBtn = $('printHistoryBtn');
+    
+    if (!patientInfoEl) return;
+
+    const params = new URL(window.location.href).searchParams;
+    const patientId = params.get('pid');
+    if (!patientId) {
+      patientInfoEl.innerHTML = '<h2>Paciente no especificado</h2>'; return;
+    }
+
+    const db = loadDB();
+    const patient = db.patients.find(p => p.id === patientId);
+    if (!patient) {
+      patientInfoEl.innerHTML = '<h2>Paciente no encontrado</h2>'; return;
+    }
+
+    const history = (db.histories[patientId] || []).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+    if (patientNameHeader) patientNameHeader.textContent = patient.fullName || patient.name;
+    if (editPatientLink) editPatientLink.href = `paciente.html?edit=${encodeURIComponent(patientId)}`;
+    if (createParteMedicoLink) createParteMedicoLink.href = `parte_medico.html?pid=${encodeURIComponent(patientId)}`;
+    if (createReportLink) createReportLink.href = `reporte.html?pid=${encodeURIComponent(patientId)}`;
+    
+    const esc = (s='') => String(s||'');
+
+    let surgeriesHtml = '—';
+    if (Array.isArray(patient.surgeries) && patient.surgeries.length > 0) {
+        surgeriesHtml = '<ul style="margin: 0; padding-left: 20px;">' + patient.surgeries.map(s => 
+            `<li><strong>${s.date || 'Fecha no especificada'}:</strong> ${s.procedure || 'Procedimiento no especificado'}. <em>${s.complication ? 'Complicaciones: ' + s.complication : ''}</em></li>`
+        ).join('') + '</ul>';
+    }
+    
+    // Calcular edad para mostrar
+    const displayAge = patient.age || calculateAge(patient.birthdate);
+
+    // --- HTML MODIFICADO para coincidir con los nuevos estilos ---
+    const patientInfoHTML = `
+        <h3 class="info-section-header">Datos Personales</h3>
+        <div class="info-grid-simple">
+            <div><strong>Edad:</strong> ${esc(displayAge || '—')}</div>
+            <div><strong>Sexo:</strong> ${esc(patient.sex||'—')}</div>
+            <div><strong>Teléfono:</strong> ${esc(patient.phone||'—')}</div>
+            <div><strong>RFC:</strong> ${esc(patient.rfc||'—')}</div>
+        </div>
+
+        <h3 class="info-section-header">Antecedentes Médicos</h3>
+        <div class="info-grid-full">
+            <div><strong>Alergias:</strong> ${(patient.allergies && patient.allergies.length) ? esc(patient.allergies.join(', ')) : '—'}</div>
+            <div><strong>Enfermedades crónicas:</strong> ${(patient.chronic && patient.chronic.length) ? esc(patient.chronic.join(', ')) : '—'}</div>
+            <div><strong>Cirugías Previas:</strong> ${surgeriesHtml}</div>
+            <div><strong>Medicación:</strong> ${(patient.medications && patient.medications.length) ? esc(patient.medications.join(', ')) : '—'}</div>
+            <div><strong>Consumo de sustancias:</strong> ${patient.substance ? (patient.substance + (patient.substanceDetail && patient.substanceDetail.name ? ` — ${patient.substanceDetail.name} (${patient.substanceDetail.frequency || ''})` : '')) : '—'}</div>
+            <div><strong>Motivo de consulta inicial:</strong> ${esc(patient.reason||'—')}</div>
+            <div><strong>Síntomas iniciales:</strong> ${esc(patient.symptoms||'—')}</div>
+        </div>
+    `;
+    // --- FIN DE LA MODIFICACIÓN ---
+    
+    patientInfoEl.innerHTML = patientInfoHTML;
+    
+    const formatHistoryDataForDetail = (h) => {
+        const { type, data } = h;
+        if (!data) return '';
+        let content = '';
+        
+        const editBaseUrl = {
+            'Receta emitida': 'receta.html',
+            'Reporte Médico': 'reporte.html',
+            'Parte Médico': 'parte_medico.html',
+            'Diagnóstico': 'diagnostico.html',
+            'Estudio Médico': 'estudio.html',
+            'Registro de Pago': 'pago.html',
+        };
+        const editUrl = editBaseUrl[type] ? `${editBaseUrl[type]}?edit_hid=${h.id}&pid=${patientId}` : null;
+        const editButton = editUrl ? `<a href="${editUrl}" class="action-chip" style="margin-left: 8px;">Editar</a>` : '';
+
+        switch (type) {
+            case 'Receta emitida': {
+                const medsList = data.medications.map(med => `<li><strong>${esc(med.name)} ${esc(med.dose)}</strong> - ${esc(med.freq)} por ${esc(med.dur)}</li>`).join('');
+                const recommendations = data.recommendations ? `<p style="margin-top:10px;"><strong>Recomendaciones:</strong> ${esc(data.recommendations)}</p>` : '';
+                const reprintButton = `<button class="action-chip primary reprint-rx-btn" data-history-id="${h.id}" style="margin-top:10px;">Reimprimir</button>`;
+                content = `<ul style="margin-top: 8px; padding-left: 20px;">${medsList}</ul>${recommendations}<div>${reprintButton}${editButton}</div>`;
+                break;
+            }
+            case 'Reporte Médico': {
+                const reprintButton = `<button class="action-chip primary reprint-report-btn" data-history-id="${h.id}" style="margin-top:10px;">Reimprimir</button>`;
+                content = `<p><strong>Título:</strong> ${esc(data.title)}</p><div>${reprintButton}${editButton}</div>`;
+                break;
+            }
+            case 'Parte Médico': {
+                const reprintButton = `<button class="action-chip primary reprint-parte-btn" data-history-id="${h.id}" style="margin-top:10px;">Reimprimir</button>`;
+                content = `<p><strong>Análisis:</strong> ${esc(data.analysis).substring(0, 100)}...</p><div>${reprintButton}${editButton}</div>`;
+                break;
+            }
+            case 'Diagnóstico': {
+                const reprintButton = `<button class="action-chip primary reprint-diag-btn" data-history-id="${h.id}" style="margin-top:10px;">Reimprimir</button>`;
+                content = `<p><strong>Diagnóstico:</strong> ${esc(data.title)}</p><div>${reprintButton}${editButton}</div>`;
+                break;
+            }
+            case 'Estudio Médico': {
+                const imagePreviews = (data.images || []).map(imgData => `<img src="${imgData}" style="max-width: 100px; max-height: 100px; margin: 5px; border-radius: 4px;" />`).join('');
+                const reprintButton = `<button class="action-chip primary reprint-study-btn" data-history-id="${h.id}" style="margin-top:10px;">Reimprimir</button>`;
+                content = `
+                    <p><strong>Parte del Cuerpo:</strong> ${esc(data.bodyPart)} (${esc(data.date)})</p>
+                    <p><strong>Hallazgos:</strong> ${esc(data.findings).substring(0, 100)}...</p>
+                    <div>${imagePreviews}</div>
+                    <div>${reprintButton}${editButton}</div>
+                `;
+                break;
+            }
+            case 'Registro de Pago': {
+                const reprintButton = `<button class="action-chip primary reprint-payment-btn" data-history-id="${h.id}" style="margin-top:10px;">Reimprimir</button>`;
+                content = `<p><strong>Concepto:</strong> ${esc(data.concept)}</p><p><strong>Monto:</strong> $${esc(data.amount)} (${esc(data.method)})</p><div>${reprintButton}${editButton}</div>`;
+                break;
+            }
+            case 'Cita agendada':
+            case 'Cita eliminada':
+            case 'Cita finalizada':
+                content = `Fecha: ${data.date}, Hora: ${data.time}`;
+                break;
+            case 'Reagenda':
+                 content = `Cita movida de ${data.oldDate} ${data.oldTime} para ${data.newDate} ${data.newTime}.`;
+                break;
+            default:
+                return '';
+        }
+        return `<div>${content}</div>`;
+    };
+
+    const renderHistorySection = (title, events) => {
+        if (!events || events.length === 0) return '';
+        
+        const eventsHtml = events.map(h => {
+            const formattedData = formatHistoryDataForDetail(h);
+            let titleText = h.type;
+            if (h.type === 'Reporte Médico' || h.type === 'Diagnóstico') {
+                titleText = h.data.title;
+            } else if (h.type === 'Estudio Médico') {
+                titleText = h.data.type;
+            } else if (h.type === 'Registro de Pago') {
+                titleText = h.type;
+            } else if (h.type === 'Parte Médico') {
+                titleText = h.type;
+            }
+
+            return `<div class="history-entry"><strong>${esc(titleText)}</strong> — ${new Date(h.timestamp).toLocaleString('es-ES',{dateStyle:'full', timeStyle:'short'})}${formattedData}</div>`;
+        }).join('');
+
+        return `<h4 class="history-section-title">${title}</h4>${eventsHtml}`;
+    };
+
+    const prescriptionEvents = history.filter(h => h.type === 'Receta emitida');
+    const reportEvents = history.filter(h => h.type === 'Reporte Médico');
+    const parteMedicoEvents = history.filter(h => h.type === 'Parte Médico');
+    const diagnosisEvents = history.filter(h => h.type === 'Diagnóstico');
+    const studyEvents = history.filter(h => h.type === 'Estudio Médico');
+    const paymentEvents = history.filter(h => h.type === 'Registro de Pago');
+    const appointmentEvents = history.filter(h => ['Cita agendada', 'Cita eliminada', 'Cita finalizada', 'Reagenda'].includes(h.type));
+    const adminEvents = history.filter(h => ['Registro inicial', 'Edición'].includes(h.type));
+
+    let historyHtml = [
+        renderHistorySection('Recetas Emitidas', prescriptionEvents),
+        renderHistorySection('Diagnósticos', diagnosisEvents),
+        renderHistorySection('Estudios Médicos', studyEvents),
+        renderHistorySection('Reportes y Partes Médicos', [...reportEvents, ...parteMedicoEvents]),
+        renderHistorySection('Registros de Pago', paymentEvents),
+        renderHistorySection('Actividad de Citas', appointmentEvents),
+        renderHistorySection('Actividad Administrativa', adminEvents)
+    ].join('');
+
+    if (!historyHtml.trim()) {
+        historyHtml = '<p>No hay historial de actividad para este paciente.</p>';
+    }
+        
+    patientHistoryEl.innerHTML = `<h3 style="margin-top: 24px; border-top: 1px solid #e2e8f0; padding-top: 16px;">Historial de Actividad</h3>${historyHtml}`;
+    
+    // Event listener unificado para todos los botones de reimpresión
+    patientHistoryEl.addEventListener('click', e => {
+        const target = e.target.closest('button');
+        if (!target || !target.dataset.historyId) return;
+        
+        const historyId = target.dataset.historyId;
+
+        if (target.classList.contains('reprint-rx-btn')) reprintPrescription(patientId, historyId);
+        else if (target.classList.contains('reprint-report-btn')) reprintReport(patientId, historyId);
+        else if (target.classList.contains('reprint-parte-btn')) reprintParteMedico(patientId, historyId);
+        else if (target.classList.contains('reprint-diag-btn')) reprintDiagnosis(patientId, historyId);
+        else if (target.classList.contains('reprint-study-btn')) reprintStudy(patientId, historyId);
+        else if (target.classList.contains('reprint-payment-btn')) reprintPayment(patientId, historyId);
+    });
+
+    const dangerZoneEl = $('dangerZone');
+    if(dangerZoneEl) dangerZoneEl.style.display = 'block';
+    $('deletePatientBtn')?.addEventListener('click', () => deletePatient(patientId));
+    
+    printHistoryBtn?.addEventListener('click', () => {
+        generateHistoryPrintWindow(patient, history);
+Si   });
 }
 
 // ---------- FUNCIONES DE IMPRESIÓN (ACTUALIZADAS) ----------
@@ -2554,35 +2967,90 @@ function initParteMedicoPage() {
     printWindow.document.close();
   }
 
-  function generatePrintWindow(patient, medications, recommendations) {
-    const header = getPrintHeader();
-    const footer = getPrintFooter();
-    const patientName = patient.fullName || patient.name;
-    const patientAge = patient.age || calculateAge(patient.birthdate);
-    const patientData = `
-        <div class="patient-data">
-            <span><strong>Paciente:</strong> ${patientName}</span>
-            <span><strong>Edad:</strong> ${patientAge}</span>
-            <span><strong>Fecha:</strong> ${new Date().toLocaleDateString('es-ES')}</span>
-        </div>`;
+// ---------- REEMPLAZA ESTA FUNCIÓN EN app.js ----------
+function generateHistoryPrintWindow(patient, history) {
+    const header = getPrintHeader();
+    const footer = getPrintFooter();
+    const esc = (s='') => String(s||'');
+    const patientName = patient.fullName || patient.name;
+    const patientAge = patient.age || calculateAge(patient.birthdate);
 
-    let medsHtml = medications.map((med, index) => `
-      <div class="med-item">
-        <h4>${index + 1}. ${med.name} ${med.dose ? `(${med.dose}, ${med.form})` : ''}</h4>
-        <p><strong>Indicaciones:</strong> Tomar ${med.freq}, por ${med.dur}.</p>
-        ${med.instr ? `<p><em>${med.instr}</em></p>` : ''}
-      </div>
-    `).join('');
-    
-    const recommendationsHtml = recommendations 
-        ? `<h3 class="section-title">Recomendaciones Adicionales</h3><p>${recommendations.replace(/\n/g, '<br>')}</p>` 
-        : '';
-    
-    const content = header + patientData + `<h3 class="section-title">Tratamiento</h3>` + medsHtml + recommendationsHtml + footer;
-    openPrintPreview(`Receta Médica - ${patientName}`, content);
-  }
+    let surgeriesHtml = 'No reportadas';
+    if (Array.isArray(patient.surgeries) && patient.surgeries.length > 0) {
+        surgeriesHtml = '<ul>' + patient.surgeries.map(s => 
+            `<li><strong>${s.date || 'N/A'}:</strong> ${s.procedure || 'N/A'}. <em>${s.complication ? 'Complicaciones: ' + s.complication : ''}</em></li>`
+        ).join('') + '</ul>';
+    }
+    
+    const formatHistoryDataForPrint = (h) => {
+        const { type, data } = h;
+        if (!data) return '';
+        let content = '';
+        switch (type) {
+            case 'Receta emitida':
+                if (data.medications && Array.isArray(data.medications)) {
+                    content = data.medications.map(med => `${med.name} ${med.dose || ''}`).join(', ');
+                }
+                break;
+            case 'Cita agendada': case 'Cita eliminada': case 'Cita finalizada': content = `Fecha: ${data.date}, Hora: ${data.time}`; break;
+            case 'Reagenda': content = `Cita movida de ${data.oldDate} ${data.oldTime} para ${data.newDate} ${data.newTime}.`; break;
+            case 'Parte Médico': content = `Diagnóstico: ${data.diagnostico || data.analysis}`; break;
+            case 'Diagnóstico': content = data.title; break;
+            case 'Estudio Médico': content = `${data.type} de ${data.bodyPart}`; break;
+            case 'Registro de Pago': content = `Monto: $${data.amount} (${data.method})`; break;
+            default: return '';
+        }
+        return `<span>${content}</span>`;
+    };
 
-  function generateHistoryPrintWindow(patient, history) {
+    const historyHtml = history.length 
+        ? '<ul>' + history.map(h => {
+            let titleText = h.type;
+            if (h.type === 'Reporte Médico' || h.type === 'Diagnóstico') {
+                titleText = h.data.title;
+            } else if (h.type === 'Estudio Médico') {
+                titleText = h.data.type;
+            }
+            return `<li style="margin-bottom: 10px;"><strong>${esc(titleText)}</strong> <span style="font-size: 0.8em; color: #555;">(${new Date(h.timestamp).toLocaleString('es-ES')})</span><br/>${formatHistoryDataForPrint(h)}</li>`
+        }).join('') + '</ul>'
+        : '<p>No hay historial de actividad.</p>';
+
+    // --- INICIO DE LA MODIFICACIÓN (HTML de impresión actualizado) ---
+    const mainContent = `
+        <div class="patient-data">
+            <span><strong>Paciente:</strong> ${patientName}</span>
+        </div>
+        <div>
+            <h3 class="section-title">Datos Personales</h3>
+            <div class="grid">
+                <div><strong>Edad:</strong> ${esc(patientAge || '—')}</div>
+                <div><strong>Sexo:</strong> ${esc(patient.sex || '—')}</div>
+                <div><strong>Teléfono:</strong> ${esc(patient.phone || '—')}</div>
+                <div><strong>RFC:</strong> ${esc(patient.rfc || '—')}</div>
+            </div>
+        </div>
+        <div>
+            <h3 class="section-title">Antecedentes Médicos</h3>
+            <p><strong>Alergias:</strong> ${(patient.allergies && patient.allergies.length) ? esc(patient.allergies.join(', ')) : '—'}</p>
+            <p><strong>Enfermedades Crónicas:</strong> ${(patient.chronic && patient.chronic.length) ? esc(patient.chronic.join(', ')) : '—'}</p>
+            <div><strong>Cirugías Previas:</strong> ${surgeriesHtml}</div>
+            <p><strong>Medicación:</strong> ${(patient.medications && patient.medications.length) ? esc(patient.medications.join(', ')) : '—'}</p>
+            <p><strong>Consumo de sustancias:</strong> ${patient.substance ? (patient.substance + (patient.substanceDetail && patient.substanceDetail.name ? ` — ${patient.substanceDetail.name} (${patient.substanceDetail.frequency || ''})` : '')) : '—'}</p>
+            <p><strong>Motivo de consulta inicial:</strong> ${esc(patient.reason||'—')}</p>
+            <p><strong>Síntomas iniciales:</strong> ${esc(patient.symptoms||'—')}</p>
+        </div>
+        <div>
+            <h3 class="section-title">Historial de Actividad</h3>
+            ${historyHtml}
+        </div>
+    `;
+    // --- FIN DE LA MODIFICACIÓN ---
+
+    const fullContent = header + mainContent + footer;
+    openPrintPreview(`Historial Médico - ${patientName}`, fullContent);
+}
+
+function generateHistoryPrintWindow(patient, history) {
     const header = getPrintHeader();
     const footer = getPrintFooter();
     const esc = (s='') => String(s||'');
@@ -2608,8 +3076,7 @@ function initParteMedicoPage() {
                 break;
             case 'Cita agendada': case 'Cita eliminada': case 'Cita finalizada': content = `Fecha: ${data.date}, Hora: ${data.time}`; break;
             case 'Reagenda': content = `Cita movida de ${data.oldDate} ${data.oldTime} para ${data.newDate} ${data.newTime}.`; break;
-            case 'Reporte Médico': content = `<strong>${data.title}</strong>`; break;
-            case 'Parte Médico': content = `Análisis: ${data.analysis.substring(0, 50)}...`; break;
+            case 'Parte Médico': content = `Diagnóstico: ${data.diagnostico || data.analysis}`; break;
             case 'Diagnóstico': content = data.title; break;
             case 'Estudio Médico': content = `${data.type} de ${data.bodyPart}`; break;
             case 'Registro de Pago': content = `Monto: $${data.amount} (${data.method})`; break;
@@ -2620,7 +3087,12 @@ function initParteMedicoPage() {
 
     const historyHtml = history.length 
         ? '<ul>' + history.map(h => {
-            const titleText = h.data.title || h.data.type || h.type;
+            let titleText = h.type;
+            if (h.type === 'Reporte Médico' || h.type === 'Diagnóstico') {
+                titleText = h.data.title;
+            } else if (h.type === 'Estudio Médico') {
+                titleText = h.data.type;
+            }
             return `<li style="margin-bottom: 10px;"><strong>${esc(titleText)}</strong> <span style="font-size: 0.8em; color: #555;">(${new Date(h.timestamp).toLocaleString('es-ES')})</span><br/>${formatHistoryDataForPrint(h)}</li>`
         }).join('') + '</ul>'
         : '<p>No hay historial de actividad.</p>';
@@ -2727,18 +3199,37 @@ function initParteMedicoPage() {
     openPrintPreview(`Estudio - ${patientName}`, fullContent);
   }
   
-  function generateParteMedicoPrintWindow(patient, parteData) {
+function generateParteMedicoPrintWindow(patient, parteData) {
     const header = getPrintHeader();
     const footer = getPrintFooter();
     const patientName = patient.fullName || patient.name;
-    const esc = (s = '') => String(s || '').replace(/\n/g, '<br>');
+    const esc = (s = '') => String(s || 'N/A').replace(/\n/g, '<br>');
+    
     const mainContent = `
         <div class="patient-data">
              <span><strong>Paciente:</strong> ${patientName}</span>
+             <span><strong>Fecha Consulta:</strong> ${esc(parteData.fechaConsulta)}</span>
         </div>
         <div>
             <h3 class="section-title">Parte Médico</h3>
-            <p>${esc(parteData.analysis)}</p>
+            
+            <h4>Motivo de la Consulta</h4>
+            <p>${esc(parteData.motivoConsulta)}</p>
+
+            <h4>Resumen de Historia Clínica (Antecedentes)</h4>
+            <p>${esc(parteData.antecedentesResumen)}</p>
+            
+            <h4>Exploración Física</h4>
+            <p>${esc(parteData.exploracionFisica)}</p>
+
+            <h4>Pruebas Complementarias</h4>
+            <p>${esc(parteData.pruebasComplementarias)}</p>
+
+            <h4>Diagnóstico</h4>
+            <p>${esc(parteData.diagnostico)}</p>
+
+            <h4>Tratamiento y Plan</h4>
+            <p>${esc(parteData.tratamiento)}</p>
         </div>
     `;
     const fullContent = header + mainContent + footer;
@@ -2765,6 +3256,7 @@ function initParteMedicoPage() {
     const fullContent = header + mainContent + footer;
     openPrintPreview(`Recibo de Pago - ${patientName}`, fullContent);
   }
+
 
   // ---------- INICIALIZADOR PRINCIPAL ----------
   document.addEventListener('DOMContentLoaded', () => {

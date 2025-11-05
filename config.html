@@ -5,25 +5,29 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Configuración</title>
   <link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
   <div id="messageBox" class="message" aria-live="polite" style="display:none"></div>
 
   <header class="header">
     <div class="brand">
-      <h1>Consultorio Médico</h1>
-      <p class="subtitle">Agenda e Historial de Pacientes</p>
+      <img src="Logo.jfif" alt="Logo Consultorio Médico" class="logo-img" />
+      <div>
+        <h1>Consultorio Médico</h1>
+        <p class="subtitle">Agenda e Historial de Pacientes</p>
+      </div>
     </div>
-    <nav class="nav">
-      <a href="index.html" class="nav-link">Inicio</a>
-      <a href="paciente.html" class="nav-link">Registrar Paciente</a>
-      <a href="historial.html" class="nav-link">Historial</a>
-      <a href="receta.html" class="nav-link">Receta</a>
-      <a href="pago.html" class="nav-link">Pago</a>
-      <a href="diagnostico.html" class="nav-link">Diagnóstico</a>
-      <a href="estudio.html" class="nav-link">Estudio</a>
-      <a href="reporte.html" class="nav-link">Reporte</a>
-      <a href="config.html" class="nav-link active">Configuración</a>
+<nav class="nav">
+      <a href="index.html" class="nav-link"><i class="fas fa-calendar-alt"></i><span>Inicio</span></a>
+      <a href="paciente.html" class="nav-link"><i class="fas fa-user-plus"></i><span>Registrar Paciente</span></a>
+      <a href="historial.html" class="nav-link"><i class="fas fa-users"></i><span>Historial</span></a>
+      <a href="receta.html" class="nav-link"><i class="fas fa-prescription-bottle-alt"></i><span>Receta</span></a>
+      <a href="pago.html" class="nav-link"><i class="fas fa-dollar-sign"></i><span>Pago</span></a>
+      <a href="diagnostico.html" class="nav-link"><i class="fas fa-file-medical"></i><span>Diagnóstico</span></a>
+      <a href="estudio.html" class="nav-link"><i class="fas fa-x-ray"></i><span>Estudio</span></a>
+      <a href="reporte.html" class="nav-link"><i class="fas fa-chart-bar"></i><span>Reporte</span></a>
+      <a href="config.html" class="nav-link active"><i class="fas fa-cog"></i><span>Configuración</span></a>
     </nav>
   </header>
 
@@ -47,6 +51,43 @@
       </div>
     </div>
   </main>
+
+  <div id="quickModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="quickModalTitle">
+    <div class="modal-window">
+      <button id="closeQuickModal" class="close-btn" aria-label="Cerrar">×</button>
+      <h3 id="quickModalTitle">Agendar Cita</h3>
+      <p>Ingresa el nombre completo del paciente. Si el paciente ya existe, se usará su registro. Si no, se creará uno nuevo.</p>
+      <label class="modal-label">Nombre del paciente</label>
+      <input id="quickModalInput" type="text" placeholder="Ej. Juan Pérez" />
+      <div class="modal-actions">
+        <button id="quickModalCancel" class="btn">Cancelar</button>
+        <button id="quickModalOk" class="btn primary">Agendar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="confirmModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-window">
+      <h3 id="confirmModalTitle">Confirmar Acción</h3>
+      <p id="confirmModalText"></p>
+      <div class="modal-actions">
+        <button id="confirmModalCancel" class="btn">Cancelar</button>
+        <button id="confirmModalOk" class="btn danger">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+<div id="promptModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-window">
+      <h3 id="promptModalTitle">Ingrese un Valor</h3>
+      <p id="promptModalText"></p>
+      <input id="promptModalInput" type="text" />
+      <div class="modal-actions">
+        <button id="promptModalCancel" class="btn">Cancelar</button>
+        <button id="promptModalOk" class="btn primary">Aceptar</button>
+      </div>
+    </div>
+  </div>
   <script src="app.js"></script>
 </body>
 </html>

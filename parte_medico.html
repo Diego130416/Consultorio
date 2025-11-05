@@ -3,26 +3,31 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Generar Parte Médico</title>
+  <title>Crear Parte Médico</title>
   <link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
   <div id="messageBox" class="message" aria-live="polite" style="display:none"></div>
 
   <header class="header">
     <div class="brand">
-      <h1>Consultorio Médico</h1>
-      <p class="subtitle">Agenda e Historial de Pacientes</p>
+      <img src="Logo.jfif" alt="Logo Consultorio Médico" class="logo-img" />
+      <div>
+        <h1>Consultorio Médico</h1>
+        <p class="subtitle">Agenda e Historial de Pacientes</p>
+      </div>
     </div>
-    <nav class="nav">
-      <a href="index.html" class="nav-link">Inicio</a>
-      <a href="paciente.html" class="nav-link">Registrar Paciente</a>
-      <a href="historial.html" class="nav-link">Historial</a>
-      <a href="receta.html" class="nav-link">Receta</a>
-      <a href="diagnostico.html" class="nav-link">Diagnóstico</a>
-      <a href="estudio.html" class="nav-link">Estudio</a>
-      <a href="reporte.html" class="nav-link">Reporte</a>
-      <a href="config.html" class="nav-link">Configuración</a>
+<nav class="nav">
+      <a href="index.html" class="nav-link"><i class="fas fa-calendar-alt"></i><span>Inicio</span></a>
+      <a href="paciente.html" class="nav-link"><i class="fas fa-user-plus"></i><span>Registrar Paciente</span></a>
+      <a href="historial.html" class="nav-link"><i class="fas fa-users"></i><span>Historial</span></a>
+      <a href="receta.html" class="nav-link"><i class="fas fa-prescription-bottle-alt"></i><span>Receta</span></a>
+      <a href="pago.html" class="nav-link"><i class="fas fa-dollar-sign"></i><span>Pago</span></a>
+      <a href="diagnostico.html" class="nav-link"><i class="fas fa-file-medical"></i><span>Diagnóstico</span></a>
+      <a href="estudio.html" class="nav-link"><i class="fas fa-x-ray"></i><span>Estudio</span></a>
+      <a href="reporte.html" class="nav-link"><i class="fas fa-chart-bar"></i><span>Reporte</span></a>
+      <a href="config.html" class="nav-link"><i class="fas fa-cog"></i><span>Configuración</span></a>
     </nav>
   </header>
 
@@ -30,34 +35,55 @@
     <form id="parteMedicoForm" class="card">
       <fieldset>
         <legend>Parte Médico</legend>
-        <h3 style="margin-top: 0;">Paciente: <span id="patientNameForParte">Cargando...</span></h3>
-        
-        <div class="group">
-          <label>Subjetivo (Síntomas referidos por el paciente)</label>
-          <textarea id="parteSubjetivo" rows="4" required></textarea>
-        </div>
+        <p>Paciente: <strong id="patientNameForParte">Cargando...</strong></p>
 
-        <div class="group">
-          <label>Objetivo (Signos vitales, hallazgos de exploración)</label>
-          <textarea id="parteObjetivo" rows="4" required></textarea>
-        </div>
+        <label>Fecha de la Consulta
+            <input id="fechaConsulta" type="date" required />
+        </label>
+        
+        <label>Motivo de la Consulta
+            <textarea id="motivoConsulta" rows="3" placeholder="Razón por la que se realizó la consulta..."></textarea>
+        </label>
+        
+        <label>Resumen de Historia Clínica (Antecedentes)
+            <textarea id="antecedentesResumen" rows="4" placeholder="Antecedentes relevantes, cirugías previas, alergias..."></textarea>
+        </label>
 
-        <div class="group">
-          <label>Análisis (Impresión diagnóstica)</label>
-          <textarea id="parteAnalisis" rows="4" required></textarea>
-        </div>
+        <label>Exploración Física
+            <textarea id="exploracionFisica" rows="5" placeholder="Signos vitales, peso, talla, y hallazgos relevantes de la exploración..."></textarea>
+        </label>
 
-        <div class="group">
-          <label>Plan (Tratamiento, estudios solicitados, próxima cita)</label>
-          <textarea id="partePlan" rows="4" required></textarea>
-        </div>
+        <label>Pruebas Complementarias
+            <textarea id="pruebasComplementarias" rows="4" placeholder="Resultados de exámenes de laboratorio, estudios de imagen..."></textarea>
+        </label>
+
+        <label>Diagnóstico
+            <textarea id="diagnostico" rows="3" placeholder="Confirmación de la enfermedad o condición..."></textarea>
+        </label>
+
+        <label>Tratamiento y Plan
+            <textarea id="tratamiento" rows="4" placeholder="Descripción del tratamiento recomendado y administrado..."></textarea>
+        </label>
       </fieldset>
-      
       <div class="form-actions">
-        <button type="submit" class="btn primary">Guardar y Generar PDF</button>
+        <button type="submit" class="btn primary">Guardar e Imprimir Parte Médico</button>
       </div>
     </form>
   </main>
+
+  <div id="quickModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="quickModalTitle">
+    <div class="modal-window">
+      <button id="closeQuickModal" class="close-btn" aria-label="Cerrar">×</button>
+      <h3 id="quickModalTitle">Agendar Cita</h3>
+      <p>Ingresa el nombre completo del paciente. Si el paciente ya existe, se usará su registro. Si no, se creará uno nuevo.</p>
+      <label class="modal-label">Nombre del paciente</label>
+      <input id="quickModalInput" type="text" placeholder="Ej. Juan Pérez" />
+      <div class="modal-actions">
+        <button id="quickModalCancel" class="btn">Cancelar</button>
+        <button id="quickModalOk" class="btn primary">Agendar</button>
+      </div>
+    </div>
+  </div>
 
   <div id="confirmModal" class="modal hidden" role="dialog" aria-modal="true">
     <div class="modal-window">
@@ -69,7 +95,8 @@
       </div>
     </div>
   </div>
-  <div id="promptModal" class="modal hidden" role="dialog" aria-modal="true">
+
+<div id="promptModal" class="modal hidden" role="dialog" aria-modal="true">
     <div class="modal-window">
       <h3 id="promptModalTitle">Ingrese un Valor</h3>
       <p id="promptModalText"></p>
@@ -80,7 +107,6 @@
       </div>
     </div>
   </div>
-
   <script src="app.js"></script>
 </body>
 </html>
