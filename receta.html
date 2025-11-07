@@ -1,101 +1,101 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Generar Receta Médica</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Generar Receta Médica</title>
+  <link rel="stylesheet" href="styles.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-  <div id="messageBox" class="message" aria-live="polite" style="display:none"></div>
+  <div id="messageBox" class="message" aria-live="polite" style="display:none"></div>
 
-  <header class="header">
-    <div class="brand">
+  <header class="header">
+    <div class="brand">
       <img src="Logo.jfif" alt="Logo Consultorio Médico" class="logo-img" />
-      <div>
+      <div>
         <h1>Consultorio Médico</h1>
-        <p class="subtitle">Agenda e Historial de Pacientes</p>
+        <p class="subtitle">Agenda e Historial de Pacientes</p>
       </div>
-    </div>
+    </div>
 <nav class="nav">
-      <a href="index.html" class="nav-link"><i class="fas fa-calendar-alt"></i><span>Inicio</span></a>
-      <a href="paciente.html" class="nav-link"><i class="fas fa-user-plus"></i><span>Registrar Paciente</span></a>
-      <a href="historial.html" class="nav-link"><i class="fas fa-users"></i><span>Historial</span></a>
-      <a href="receta.html" class="nav-link active"><i class="fas fa-prescription-bottle-alt"></i><span>Receta</span></a>
-      <a href="pago.html" class="nav-link"><i class="fas fa-dollar-sign"></i><span>Pago</span></a>
-      <a href="diagnostico.html" class="nav-link"><i class="fas fa-file-medical"></i><span>Diagnóstico</span></a>
-      <a href="estudio.html" class="nav-link"><i class="fas fa-x-ray"></i><span>Estudio</span></a>
-      <a href="reporte.html" class="nav-link"><i class="fas fa-chart-bar"></i><span>Reporte</span></a>
-      <a href="config.html" class="nav-link"><i class="fas fa-cog"></i><span>Configuración</span></a>
-    </nav>
-  </header>
+      <a href="index.html" class="nav-link"><i class="fas fa-calendar-alt"></i><span>Inicio</span></a>
+      <a href="paciente.html" class="nav-link"><i class="fas fa-user-plus"></i><span>Registrar Paciente</span></a>
+      <a href="historial.html" class="nav-link"><i class="fas fa-users"></i><span>Historial</span></a>
+      <a href="receta.html" class="nav-link active"><i class="fas fa-prescription-bottle-alt"></i><span>Receta</span></a>
+      <a href="pago.html" class="nav-link"><i class="fas fa-dollar-sign"></i><span>Pago</span></a>
+      <a href="diagnostico.html" class="nav-link"><i class="fas fa-file-medical"></i><span>Diagnóstico</span></a>
+      <a href="estudio.html" class="nav-link"><i class="fas fa-x-ray"></i><span>Estudio</span></a>
+      <a href="reporte.html" class="nav-link"><i class="fas fa-chart-bar"></i><span>Reporte</span></a>
+      <a href="config.html" class="nav-link"><i class="fas fa-cog"></i><span>Configuración</span></a>
+    </nav>
+  </header>
 
-  <main class="form-container">
-    <form id="prescriptionForm" class="card">
-      <fieldset>
-        <legend>Datos de la Receta</legend>
-        <label>Seleccionar Paciente
-          <select id="patientSelect" required>
-            <option value="">Cargando pacientes...</option>
-          </select>
-        </label>
-      </fieldset>
+  <main class="form-container">
+    <form id="prescriptionForm" class="card">
+      <fieldset>
+        <legend>Datos de la Receta</legend>
+        <label class="required">Seleccionar Paciente
+          <select id="patientSelect" required>
+            <option value="">Cargando pacientes...</option>
+          </select>
+        </label>
+      </fieldset>
 
-      <fieldset>
-        <legend>Medicamentos</legend>
-        <div id="medicationsContainer">
-        </div>
-        <button type="button" id="addMedicationBtn" class="btn" style="margin-top: 12px;">+ Añadir Medicamento</button>
-      </fieldset>
+      <fieldset>
+        <legend class="required">Medicamentos</legend>
+        <div id="medicationsContainer">
+        </div>
+        <button type="button" id="addMedicationBtn" class="btn" style="margin-top: 12px;">+ Añadir Medicamento</button>
+      </fieldset>
       
       <fieldset>
         <legend>Recomendaciones Generales</legend>
         <textarea id="recommendations" rows="4" placeholder="Ej. Reposo relativo por 3 días, aplicar hielo en la zona afectada..."></textarea>
       </fieldset>
-      
-      <div class="form-actions">
-        <button type="submit" class="btn primary">Guardar e Imprimir Receta</button>
-      </div>
-    </form>
-  </main>
+      
+      <div class="form-actions">
+        <button type="submit" class="btn primary">Guardar e Imprimir Receta</button>
+      </div>
+    </form>
+  </main>
 
-  <div id="quickModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="quickModalTitle">
-    <div class="modal-window">
-      <button id="closeQuickModal" class="close-btn" aria-label="Cerrar">×</button>
-      <h3 id="quickModalTitle">Agendar Cita</h3>
-      <p>Ingresa el nombre completo del paciente. Si el paciente ya existe, se usará su registro. Si no, se creará uno nuevo.</p>
-      <label class="modal-label">Nombre del paciente</label>
-      <input id="quickModalInput" type="text" placeholder="Ej. Juan Pérez" />
-      <div class="modal-actions">
-        <button id="quickModalCancel" class="btn">Cancelar</button>
-        <button id="quickModalOk" class="btn primary">Agendar</button>
-      </div>
-    </div>
-  </div>
+  <div id="quickModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="quickModalTitle">
+    <div class="modal-window">
+      <button id="closeQuickModal" class="close-btn" aria-label="Cerrar">×</button>
+      <h3 id="quickModalTitle">Agendar Cita</h3>
+      <p>Ingresa el nombre completo del paciente. Si el paciente ya existe, se usará su registro. Si no, se creará uno nuevo.</p>
+      <label class="modal-label">Nombre del paciente</label>
+      <input id="quickModalInput" type="text" placeholder="Ej. Juan Pérez" />
+      <div class="modal-actions">
+        <button id="quickModalCancel" class="btn">Cancelar</button>
+        <button id="quickModalOk" class="btn primary">Agendar</button>
+      </div>
+    </div>
+  </div>
 
-  <div id="confirmModal" class="modal hidden" role="dialog" aria-modal="true">
-    <div class="modal-window">
-      <h3 id="confirmModalTitle">Confirmar Acción</h3>
-      <p id="confirmModalText"></p>
-      <div class="modal-actions">
-        <button id="confirmModalCancel" class="btn">Cancelar</button>
-        <button id="confirmModalOk" class="btn danger">Confirmar</button>
-      </div>
-    </div>
-  </div>
+  <div id="confirmModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-window">
+      <h3 id="confirmModalTitle">Confirmar Acción</h3>
+      <p id="confirmModalText"></p>
+      <div class="modal-actions">
+        <button id="confirmModalCancel" class="btn">Cancelar</button>
+        <button id="confirmModalOk" class="btn danger">Confirmar</button>
+      </div>
+    </div>
+  </div>
 
 <div id="promptModal" class="modal hidden" role="dialog" aria-modal="true">
-    <div class="modal-window">
-      <h3 id="promptModalTitle">Ingrese un Valor</h3>
-      <p id="promptModalText"></p>
-      <input id="promptModalInput" type="text" />
-      <div class="modal-actions">
-        <button id="promptModalCancel" class="btn">Cancelar</button>
-        <button id="promptModalOk" class="btn primary">Aceptar</button>
-      </div>
-    </div>
-  </div>
-  <script src="app.js"></script>
+    <div class="modal-window">
+      <h3 id="promptModalTitle">Ingrese un Valor</h3>
+      <p id="promptModalText"></p>
+      <input id="promptModalInput" type="text" />
+      <div class="modal-actions">
+        <button id="promptModalCancel" class="btn">Cancelar</button>
+        <button id="promptModalOk" class="btn primary">Aceptar</button>
+      </div>
+    </div>
+  </div>
+  <script src="app.js"></script>
 </body>
 </html>

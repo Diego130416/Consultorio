@@ -1,9 +1,6 @@
 /* ---------- 1. VARIABLES GLOBALES Y ESTILOS BASE ---------- */
 :root {
-  /* Nueva Tipografía */
   --font-sans: "Nunito Sans", Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  
-  /* Nueva Paleta de Colores (Azul Marino y Blanco) */
   --primary: #003366;       /* Azul Marino (Navy) */
   --primary-dark: #002244;   /* Marino más oscuro para hover */
   --primary-light: #d6e8ff;  /* Azul pálido para fondos */
@@ -948,171 +945,128 @@ select:focus {
   }
 }
 
-/* ---------- 6. ESTILOS PARA EL PERFIL DE PACIENTE (paciente_full.html) ---------- */
+/* ---------- 6. NUEVO DISEÑO DE PERFIL DE PACIENTE (paciente_full.html) ---------- */
 
-/* Encabezado de la página de detalle */
-.patient-detail-header {
+/* Utilidad para anular el efecto hover en la tarjeta principal */
+.card.no-hover:hover {
+  transform: none;
+  box-shadow: var(--shadow-sm);
+}
+
+/* 1. Barra de Información Clave */
+.patient-key-info {
   display: flex;
   flex-wrap: wrap;
-  /* Permite que los botones pasen abajo en móviles */
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  padding-bottom: 1.25rem;
-  border-bottom: 1px solid var(--border);
+  gap: 1rem 1.5rem;
+  background-color: var(--primary-light);
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--radius);
+  border: 1px solid #bde4ff;
+  margin-top: 1rem;
+}
+.patient-key-info .key-item {
+  font-size: 0.9rem;
+  color: var(--primary-dark);
+}
+.patient-key-info .key-item strong {
+  font-weight: 700;
+  color: var(--primary);
+  margin-right: 0.25rem;
 }
 
-.patient-detail-header h2 {
-  margin: 0;
-}
-
-.patient-detail-actions {
-  display: flex;
-  gap: 0.75rem;
-  flex-shrink: 0;
-}
-
-/* (NUEVO) Encabezados de sección como en la impresión */
-#patientInfo {
-  padding-top: 1rem;
-  gap: 0;
-  /* Anula el 'gap' de .card */
-}
-
-.info-section-header {
-  font-size: 1.25rem;
-  color: #059669;
-  /* Color verde para los encabezados */
-  font-weight: 600;
+/* 2. Grid Principal de Dos Columnas */
+.patient-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem 2rem;
   margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+/* 3. Título de Columna */
+.column-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--primary);
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
   border-bottom: 1px solid var(--border);
 }
 
-#patientInfo h3:first-of-type {
-  margin-top: 0;
-}
-
-/* (NUEVO) Cuadrícula para datos cortos (Edad, Sexo, etc.) */
-.info-grid-simple {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem 1.5rem;
-}
-
-/* (NUEVO) Contenedor para datos largos (Alergias, etc.) */
-.info-grid-full {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-}
-
-/* (CORREGIDO) Estilo base para cada campo de dato */
-.info-grid-simple>div,
-.info-grid-full>div {
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--bg);
+/* 4. Columna de Antecedentes (Izquierda) */
+.patient-antecedentes {
   display: flex;
-  align-items: baseline;
-  font-size: 1rem;
+  flex-direction: column;
+  gap: 1.25rem;
 }
-
-/* (CORREGIDO) Etiqueta SÓLO para la cuadrícula simple */
-.info-grid-simple>div strong {
-  color: var(--muted);
-  font-weight: 500;
-  width: 150px;
-  /* Ancho fijo para la etiqueta */
-  flex-shrink: 0;
+.data-group {
+  font-size: 0.95rem;
+  line-height: 1.6;
 }
-
-/* (CORREGIDO) Etiqueta SÓLO para la cuadrícula completa (ancha) */
-.info-grid-full>div strong {
-  color: var(--muted);
-  font-weight: 500;
-  width: 200px;
-  /* Ancho un poco más grande para "Consumo de sustancias" */
-  flex-shrink: 0;
-  margin-right: 0.5rem;
-  /* Pequeño espacio */
-}
-
-
-/* Títulos de sección en el historial (Ej. "Recetas Emitidas") */
-.history-section-title {
-  font-size: 1.125rem;
+.data-group strong {
+  display: block;
+  font-weight: 700;
   color: var(--text);
-  margin-top: 1.5rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--border);
+  margin-bottom: 0.25rem;
 }
-
-/* Estilo para cada entrada en el historial */
-.history-entry {
-  background-color: #fcfdff;
-  border: 1px solid var(--border);
-  border-left: 4px solid var(--primary-light);
-  border-radius: 8px;
-  padding: 1rem 1.25rem;
-  margin-top: 0.75rem;
-  box-shadow: var(--shadow-sm);
-}
-
-.history-entry strong {
-  font-size: 1.05rem;
-  color: var(--text);
-  display: inline-block;
-}
-
-.history-entry>strong+span {
-  font-size: 0.85rem;
+.data-group span,
+.data-group ul {
   color: var(--muted);
-  margin-left: 0.5rem;
+}
+.data-group ul {
+  padding-left: 20px;
+  margin-top: 5px;
 }
 
-.history-entry>div {
-  margin-top: 0.5rem;
+/* 5. Columna de Actividad (Derecha) */
+.patient-activity-log {
+  display: flex;
+  flex-direction: column;
+}
+#patientHistory {
+  flex-grow: 1;
+  /* Los estilos .history-entry, .history-section-title, etc., ya están definidos y se aplicarán solos */
 }
 
-/* (CORREGIDO) Zona de Peligro */
+/* 6. Zona de Peligro (Rediseñada) */
 .danger-zone {
   margin-top: 2.5rem;
   padding: 1.5rem;
   border: 1px solid var(--danger);
-  /* Borde rojo */
   border-radius: 8px;
-  background-color: #fff5f5;
-  /* Fondo rojo claro */
-  display: grid;
-  /* Usamos grid para alinear */
-  grid-template-columns: 1fr auto;
-  /* Texto a la izquierda, botón a la derecha */
-  align-items: center;
-  gap: 0.5rem 1.5rem;
+  background-color: #fef2f2;
 }
-
 .danger-zone h4 {
   color: var(--danger-dark);
   margin-top: 0;
-  margin-bottom: 0;
-  grid-column: 1 / 2;
-  /* Columna 1 */
+  margin-bottom: 0.25rem;
 }
-
 .danger-zone p {
   color: var(--muted);
   font-size: 0.95rem;
-  margin-bottom: 0;
-  grid-column: 1 / 2;
-  /* Columna 1 */
+  margin-bottom: 1rem;
+}
+#deletePatientBtn {
+  grid-column: auto; /* Reseteo */
+  grid-row: auto; /* Reseteo */
 }
 
-#deletePatientBtn {
-  grid-column: 2 / 3;
-  /* Columna 2 */
-  grid-row: 1 / 3;
-  /* Abarca 2 filas */
+/* 7. Responsividad */
+@media (max-width: 980px) {
+  .patient-detail-grid {
+    grid-template-columns: 1fr; /* Apilar columnas en móvil */
+  }
+  .patient-key-info {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  /* La columna de actividad (derecha) irá debajo */
+  .patient-activity-log {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
 }
 
 

@@ -8,186 +8,187 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
     :root{
-      --max-width: 1150px;
-      --gap: 24px;
-      --card-padding: 24px;
-      --bg: #fafafa;
-      --card-bg: #fff;
-      --border: #e6e6e6;
-      --text: #222;
-      --muted: #666;
-      --primary: #2563eb;
-      --radius: 10px;
+       --max-width: 1150px;
+       --gap: 24px;
+       --card-padding: 24px;
+       /* --bg: #fafafa; */ /* Comentado para usar el --bg global de styles.css */
+       /* --card-bg: #fff; */
+       /* --border: #e6e6e6; */
+       /* --text: #222; */
+       /* --muted: #666; */
+       /* --primary: #2563eb; */
+       /* --radius: 10px; */
     }
 
     /* Reset simple */
-    *{box-sizing:border-box;margin:0;padding:0}
-    html,body{height:100%}
+    /* *{box-sizing:border-box;margin:0;padding:0} */ /* Comentado, ya está en styles.css */
+    /* html,body{height:100%} */
     body{
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      background:var(--bg);
-      color:var(--text);
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      line-height:1.4;
-      padding:20px;
+       /* font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; */ /* Usará la fuente de styles.css */
+       /* background:var(--bg); */
+       /* color:var(--text); */
+       /* -webkit-font-smoothing:antialiased; */
+       /* -moz-osx-font-smoothing:grayscale; */
+       line-height:1.4;
+       /* padding:20px; */ /* Usa el padding de styles.css */
     }
 
-    header.header{
-      max-width:var(--max-width);
-      margin:0 auto 20px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:16px;
-    }
-    .brand h1{font-size:1.5rem;margin-bottom:4px}
-    .brand .subtitle{font-size:0.95rem;color:var(--muted)}
+    /* header.header{ */ /* Comentado, ya está en styles.css */
+       /* max-width:var(--max-width);
+       margin:0 auto 20px;
+       display:flex;
+       align-items:center;
+       justify-content:space-between;
+       gap:16px;
+    } */
+    /* .brand h1{font-size:1.5rem;margin-bottom:4px} */
+    /* .brand .subtitle{font-size:0.95rem;color:var(--muted)} */
 
-    .nav{display:flex;gap:10px;flex-wrap:wrap}
-    .nav-link{font-size:0.95rem;color:var(--muted);text-decoration:none;padding:6px 10px;border-radius:6px}
-    .nav-link.active{background:var(--primary);color:#fff}
+    /* .nav{display:flex;gap:10px;flex-wrap:wrap} */
+    /* .nav-link{font-size:0.95rem;color:var(--muted);text-decoration:none;padding:6px 10px;border-radius:6px} */
+    /* .nav-link.active{background:var(--primary);color:#fff} */
 
     /* Contenedor principal: dos columnas mitad y mitad */
-    main.form-container{
-      max-width:var(--max-width);
-      margin:0 auto;
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:var(--gap);
-      align-items:start;
-      min-height:540px; /* altura mínima general */
+    /* RENOMBRADO de main.form-container a main.container para coincidir con el HTML */
+    main.container{
+       max-width:var(--max-width);
+       margin:0 auto;
+       display:grid;
+       grid-template-columns: 1fr 1fr;
+       gap:var(--gap);
+       align-items:start;
+       min-height:540px; /* altura mínima general */
     }
 
     /* Tarjetas (cards) */
-    .card{
-      background:var(--card-bg);
-      border:1px solid var(--border);
-      border-radius:var(--radius);
-      padding:var(--card-padding);
-      display:flex;
-      flex-direction:column;
-      gap:18px;
-      /* hacer que ambas tarjetas tengan la misma altura */
-      min-height:480px;
-      height:100%;
-      box-shadow:0 2px 6px rgba(0,0,0,0.03);
-    }
+    /* .card{ */ /* Comentado, usa el .card global */
+       /* background:var(--card-bg);
+       border:1px solid var(--border);
+       border-radius:var(--radius);
+       padding:var(--card-padding);
+       display:flex;
+       flex-direction:column;
+       gap:18px; */
+       /* hacer que ambas tarjetas tengan la misma altura */
+       /* min-height:480px;
+       height:100%;
+       box-shadow:0 2px 6px rgba(0,0,0,0.03);
+    } */
 
     /* Forzar que las dos columnas ocupen exactamente la mitad del ancho
-       incluso cuando el contenedor tiene max-width */
-    .form-container > .card{
-      width:100%;
-      /* Flexibility for consistent height when content differs */
-      display:flex;
-      flex-direction:column;
+         incluso cuando el contenedor tiene max-width */
+    /* RENOMBRADO de .form-container > .card a .container > .card */
+    .container > .card{
+       width:100%;
+       /* Flexibility for consistent height when content differs */
+       display:flex;
+       flex-direction:column;
     }
 
     /* Encabezados y texto más grandes */
     .card h3{font-size:1.25rem}
     fieldset{
-      border:1px solid var(--border);
-      padding:14px;
-      border-radius:8px;
-      background:#fbfbfb;
+       border:1px solid var(--border);
+       padding:14px;
+       border-radius:8px;
+       background:#fbfbfb;
     }
     legend{font-weight:600;font-size:1.05rem;color:var(--text);padding:0 8px}
     fieldset p, fieldset label, label{font-size:1rem;color:var(--muted)}
-    select{font-size:1rem;padding:8px;border-radius:6px;border:1px solid var(--border)}
+    /* select{font-size:1rem;padding:8px;border-radius:6px;border:1px solid var(--border)} */ /* Comentado, usa el select global */
 
     /* Botones más grandes */
-    .btn{
-      display:inline-block;
-      padding:10px 14px;
-      font-size:1rem;
-      border-radius:8px;
-      border:1px solid transparent;
-      cursor:pointer;
-    }
-    .btn.primary{background:var(--primary);color:#fff;border-color:rgba(0,0,0,0.03)}
+    /* .btn{ */ /* Comentado, usa el .btn global */
+       /* display:inline-block;
+       padding:10px 14px;
+       font-size:1rem;
+       border-radius:8px;
+       border:1px solid transparent;
+       cursor:pointer;
+    } */
+    /* .btn.primary{background:var(--primary);color:#fff;border-color:rgba(0,0,0,0.03)} */
 
     /* Contenedor de resultados: ocupar todo el espacio restante para igualar alturas */
     #reportResultContainer{
-      flex:1 1 auto;
-      overflow:auto;
-      padding-top:12px;
-      border-top:1px solid var(--border);
-      margin-top:4px;
+       flex:1 1 auto;
+       overflow:auto;
+       padding-top:12px;
+       border-top:1px solid var(--border);
+       margin-top:4px;
     }
 
     /* Si necesitas que la apariencia sea aún más "grande" en pantallas anchas */
     @media (min-width:1200px){
-      .card h3{font-size:1.5rem}
-      fieldset p, fieldset label{font-size:1.05rem}
-      .btn{font-size:1.05rem;padding:12px 16px}
-      .card{min-height:560px}
+       .card h3{font-size:1.5rem}
+       fieldset p, fieldset label{font-size:1.05rem}
+       .btn{font-size:1.05rem;padding:12px 16px}
+       .card{min-height:560px}
     }
 
     /* Responsive: en móviles apilar las secciones y mantener tamaños legibles */
     @media (max-width:980px){
-      main.form-container{
-        grid-template-columns:1fr;
-        gap:16px;
-      }
-      .card{min-height: auto}
+       main.container{
+         grid-template-columns:1fr;
+         gap:16px;
+       }
+       .card{min-height: auto}
     }
   </style>
-</style>
 </head>
 <body>
-  <div id="messageBox" class="message" aria-live="polite" style="display:none"></div>
+  <div id="messageBox" class="message" aria-live="polite" style="display:none"></div>
 
-  <header class="header">
-    <div class="brand">
+  <header class="header">
+    <div class="brand">
       <img src="Logo.jfif" alt="Logo Consultorio Médico" class="logo-img" />
-      <div>
+      <div>
         <h1>Consultorio Médico</h1>
-        <p class="subtitle">Agenda e Historial de Pacientes</p>
+        <p class="subtitle">Agenda e Historial de Pacientes</p>
       </div>
-    </div>
+    </div>
 <nav class="nav">
-      <a href="index.html" class="nav-link"><i class="fas fa-calendar-alt"></i><span>Inicio</span></a>
-      <a href="paciente.html" class="nav-link"><i class="fas fa-user-plus"></i><span>Registrar Paciente</span></a>
-      <a href="historial.html" class="nav-link"><i class="fas fa-users"></i><span>Historial</span></a>
-      <a href="receta.html" class="nav-link"><i class="fas fa-prescription-bottle-alt"></i><span>Receta</span></a>
-      <a href="pago.html" class="nav-link"><i class="fas fa-dollar-sign"></i><span>Pago</span></a>
-      <a href="diagnostico.html" class="nav-link"><i class="fas fa-file-medical"></i><span>Diagnóstico</span></a>
-      <a href="estudio.html" class="nav-link"><i class="fas fa-x-ray"></i><span>Estudio</span></a>
-      <a href="reporte.html" class="nav-link active"><i class="fas fa-chart-bar"></i><span>Reporte</span></a>
-      <a href="config.html" class="nav-link"><i class="fas fa-cog"></i><span>Configuración</span></a>
-    </nav>
-  </header>
+      <a href="index.html" class="nav-link"><i class="fas fa-calendar-alt"></i><span>Inicio</span></a>
+      <a href="paciente.html" class="nav-link"><i class="fas fa-user-plus"></i><span>Registrar Paciente</span></a>
+      <a href="historial.html" class="nav-link"><i class="fas fa-users"></i><span>Historial</span></a>
+      <a href="receta.html" class="nav-link"><i class="fas fa-prescription-bottle-alt"></i><span>Receta</span></a>
+      <a href="pago.html" class="nav-link"><i class="fas fa-dollar-sign"></i><span>Pago</span></a>
+      <a href="diagnostico.html" class="nav-link"><i class="fas fa-file-medical"></i><span>Diagnóstico</span></a>
+      <a href="estudio.html" class="nav-link"><i class="fas fa-x-ray"></i><span>Estudio</span></a>
+      <a href="reporte.html" class="nav-link active"><i class="fas fa-chart-bar"></i><span>Reporte</span></a>
+      <a href="config.html" class="nav-link"><i class="fas fa-cog"></i><span>Configuración</span></a>
+    </nav>
+  </header>
 
-  <main class="container">
+  <main class="container">
     
     <aside class="card" id="report-generator">
-      <h3>Generador de Reportes</h3>
-      
-      <fieldset>
-          <legend>Reporte de Pagos y Facturación</legend>
-          <p>Genera una lista de todos los pagos, indicando el estado de facturación.</p>
-          <button type="button" id="btnReportePagos" class="btn primary">Generar Reporte de Pagos</button>
-      </fieldset>
-      
-      <fieldset>
-          <legend>Reporte de Citas</legend>
-          <p>Genera un listado de citas por paciente y fecha.</p>
-          <label>Seleccionar Periodo
-              <select id="reporteCitasPeriodo">
-                  <option value="general">General (Todas)</option>
-                  <option value="mensual">Mensual (Últimos 30 días)</option>
-                  <option value="semanal">Semanal (Últimos 7 días)</option>
-              </select>
-          </label>
-          <button type="button" id="btnReporteCitas" class="btn primary" style="margin-top: 1rem;">Generar Reporte de Citas</button>
-      </fieldset>
-      
-      <fieldset>
-          <legend>Reporte de Recetas por Paciente</legend>
-          <p>Genera un listado de todos los pacientes con sus recetas y recomendaciones.</p>
-          <button type="button" id="btnReporteRecetas" class="btn primary">Generar Reporte de Recetas</button>
-      </fieldset>
-    </aside>
+       <h3>Generador de Reportes</h3>
+       
+       <fieldset>
+           <legend>Reporte de Pagos y Facturación</legend>
+           <p>Genera una lista de todos los pagos, indicando el estado de facturación.</p>
+           <button type="button" id="btnReportePagos" class="btn primary">Generar Reporte de Pagos</button>
+       </fieldset>
+       
+       <fieldset>
+           <legend>Reporte de Citas</legend>
+           <p>Genera un listado de citas por paciente y fecha.</p>
+           <label>Seleccionar Periodo
+               <select id="reporteCitasPeriodo">
+                   <option value="general">General (Todas)</option>
+                   <option value="mensual">Mensual (Últimos 30 días)</option>
+                   <option value="semanal">Semanal (Últimos 7 días)</option>
+               </select>
+           </label>
+           <button type="button" id="btnReporteCitas" class="btn primary" style="margin-top: 1rem;">Generar Reporte de Citas</button>
+       </fieldset>
+       
+       <fieldset>
+           <legend>Reporte de Recetas por Paciente</legend>
+           <p>Genera un listado de todos los pacientes con sus recetas y recomendaciones.</p>
+           <button type="button" id="btnReporteRecetas" class="btn primary">Generar Reporte de Recetas</button>
+       </fieldset>
+    </aside>
     
     <section class="card" id="report-results">
         <h3>Resultados del Reporte</h3>
@@ -196,44 +197,44 @@
         </div>
     </section>
         
-  </main>
+  </main>
 
-  <div id="quickModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="quickModalTitle">
-    <div class="modal-window">
-      <button id="closeQuickModal" class="close-btn" aria-label="Cerrar">×</button>
-      <h3 id="quickModalTitle">Agendar Cita</h3>
-      <p>Ingresa el nombre completo del paciente. Si el paciente ya existe, se usará su registro. Si no, se creará uno nuevo.</p>
-      <label class="modal-label">Nombre del paciente</label>
-      <input id="quickModalInput" type="text" placeholder="Ej. Juan Pérez" />
-      <div class="modal-actions">
-        <button id="quickModalCancel" class="btn">Cancelar</button>
-        <button id="quickModalOk" class="btn primary">Agendar</button>
-      </div>
-    </div>
-  </div>
+  <div id="quickModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="quickModalTitle">
+    <div class="modal-window">
+      <button id="closeQuickModal" class="close-btn" aria-label="Cerrar">×</button>
+      <h3 id="quickModalTitle">Agendar Cita</h3>
+      <p>Ingresa el nombre completo del paciente. Si el paciente ya existe, se usará su registro. Si no, se creará uno nuevo.</p>
+      <label class="modal-label">Nombre del paciente</label>
+      <input id="quickModalInput" type="text" placeholder="Ej. Juan Pérez" />
+      <div class="modal-actions">
+        <button id="quickModalCancel" class="btn">Cancelar</button>
+        <button id="quickModalOk" class="btn primary">Agendar</button>
+      </div>
+    </div>
+  </div>
 
-  <div id="confirmModal" class="modal hidden" role="dialog" aria-modal="true">
-    <div class="modal-window">
-      <h3 id="confirmModalTitle">Confirmar Acción</h3>
-      <p id="confirmModalText"></p>
-      <div class="modal-actions">
-        <button id="confirmModalCancel" class="btn">Cancelar</button>
-        <button id="confirmModalOk" class="btn danger">Confirmar</button>
-      </div>
-    </div>
-  </div>
+  <div id="confirmModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-window">
+      <h3 id="confirmModalTitle">Confirmar Acción</h3>
+      <p id="confirmModalText"></p>
+      <div class="modal-actions">
+        <button id="confirmModalCancel" class="btn">Cancelar</button>
+        <button id="confirmModalOk" class="btn danger">Confirmar</button>
+      </div>
+    </div>
+  </div>
 
 <div id="promptModal" class="modal hidden" role="dialog" aria-modal="true">
-    <div class="modal-window">
-      <h3 id="promptModalTitle">Ingrese un Valor</h3>
-      <p id="promptModalText"></p>
-      <input id="promptModalInput" type="text" />
-      <div class="modal-actions">
-        <button id="promptModalCancel" class="btn">Cancelar</button>
-        <button id="promptModalOk" class="btn primary">Aceptar</button>
-      </div>
-    </div>
-  </div>
-  <script src="app.js"></script>
+    <div class="modal-window">
+      <h3 id="promptModalTitle">Ingrese un Valor</h3>
+      <p id="promptModalText"></p>
+      <input id="promptModalInput" type="text" />
+      <div class="modal-actions">
+        <button id="promptModalCancel" class="btn">Cancelar</button>
+        <button id="promptModalOk" class="btn primary">Aceptar</button>
+      </div>
+    </div>
+  </div>
+  <script src="app.js"></script>
 </body>
 </html>

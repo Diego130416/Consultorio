@@ -6,7 +6,8 @@
   <title>Paciente — Detalle</title>
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-</head>
+  
+  </head>
 <body>
   <div id="messageBox" class="message" aria-live="polite" style="display:none"></div>
 
@@ -14,12 +15,12 @@
     <div class="brand">
       <img src="Logo.jfif" alt="Logo Consultorio Médico" class="logo-img" />
       <div>
-        <h1 style="margin:0;font-size:1.125rem">Consultorio Médico</h1>
+        <h1>Consultorio Médico</h1> 
         <p class="subtitle">Agenda e Historial de Pacientes</p>
       </div>
     </div>
 
-    <nav class="nav" aria-label="Navegación principal" style="margin-top:0.6rem">
+    <nav class="nav" aria-label="Navegación principal">
       <a href="index.html" class="nav-link"><i class="fas fa-calendar-alt"></i><span>Inicio</span></a>
       <a href="paciente.html" class="nav-link"><i class="fas fa-user-plus"></i><span>Registrar Paciente</span></a>
       <a href="historial.html" class="nav-link active"><i class="fas fa-users"></i><span>Historial</span></a>
@@ -33,7 +34,8 @@
   </header>
 
   <main class="form-container">
-    <section class="card">
+    <section class="card no-hover">
+      
       <div class="patient-detail-header">
         <h2 id="patientNameHeader">Cargando...</h2>
         <div class="patient-detail-actions" role="group" aria-label="Acciones del paciente">
@@ -43,38 +45,36 @@
         </div>
       </div>
 
-      <div id="patientInfo" class="patient-info-grid" aria-live="polite">
-        <h3 class="info-section-header">Datos Personales</h3>
-
-        <div class="info-grid-simple" role="list">
-          <div role="listitem"><strong>Edad:</strong> <span id="edadValue">—</span></div>
-          <div role="listitem"><strong>Sexo:</strong> <span id="sexoValue">—</span></div>
-          <div role="listitem"><strong>Teléfono:</strong> <span id="telefonoValue">—</span></div>
-          <div role="listitem"><strong>RFC:</strong> <span id="rfcValue">—</span></div>
-        </div>
-
-        <h3 class="info-section-header">Antecedentes Médicos</h3>
-
-        <div class="info-grid-full" role="list">
-          <div role="listitem"><strong>Alergias:</strong> <span id="alergiasValue">—</span></div>
-        </div>
+      <div id="patientKeyInfo" class="patient-key-info" aria-live="polite">
+        <p>Cargando datos clave...</p>
       </div>
 
-      <div id="patientHistory"></div>
-
-      <div id="dangerZone" class="danger-zone" style="display: none;">
+      <div class="patient-detail-grid">
+        
+        <div id="patientInfo" class="patient-antecedentes" aria-live="polite">
+          <h3 class="column-title">Antecedentes Médicos</h3>
+          </div>
+        
+        <div class="patient-activity-log">
+          <h3 class="column-title">Historial de Actividad</h3>
+          <div id="patientHistory">
+             </div>
+        </div>
+      
+      </div> <div id="dangerZone" class="danger-zone" style="display: none;">
         <h4>Zona de Peligro</h4>
         <p>Esta acción es permanente y no se puede deshacer.</p>
         <button id="deletePatientBtn" class="btn danger">Eliminar Paciente Permanentemente</button>
       </div>
+      
     </section>
   </main>
 
   <div id="confirmModal" class="modal hidden" role="dialog" aria-modal="true">
-    <div class="modal-window" style="background:#fff;border-radius:8px;padding:1rem;border:1px solid var(--border);max-width:420px;margin:2rem auto">
+    <div class="modal-window">
       <h3 id="confirmModalTitle">Confirmar Acción</h3>
       <p id="confirmModalText"></p>
-      <div class="modal-actions" style="display:flex;gap:0.5rem;justify-content:flex-end">
+      <div class="modal-actions">
         <button id="confirmModalCancel" class="btn">Cancelar</button>
         <button id="confirmModalOk" class="btn danger">Confirmar</button>
       </div>
@@ -82,38 +82,16 @@
   </div>
 
   <div id="promptModal" class="modal hidden" role="dialog" aria-modal="true">
-    <div class="modal-window" style="background:#fff;border-radius:8px;padding:1rem;border:1px solid var(--border);max-width:420px;margin:2rem auto">
+    <div class="modal-window">
       <h3 id="promptModalTitle">Ingrese un Valor</h3>
       <p id="promptModalText"></p>
-      <input id="promptModalInput" type="text" style="width:100%;padding:0.5rem;margin-bottom:0.5rem;border:1px solid var(--border);border-radius:6px" />
-      <div class="modal-actions" style="display:flex;gap:0.5rem;justify-content:flex-end">
+      <input id="promptModalInput" type="text" />
+      <div class="modal-actions">
         <button id="promptModalCancel" class="btn">Cancelar</button>
         <button id="promptModalOk" class="btn primary">Aceptar</button>
       </div>
     </div>
   </div>
-
-  <script>
-    // Ejemplo ligero para poblar valores. Sustituye con tu lógica real (fetch, localStorage, etc.)
-    const paciente = {
-      nombre: 'Juan Pérez',
-      edad: '—',
-      sexo: '—',
-      telefono: '—',
-      rfc: '—',
-      alergias: '—'
-    };
-
-    function init() {
-      document.getElementById('patientNameHeader').textContent = paciente.nombre || 'Paciente';
-      document.getElementById('edadValue').textContent = paciente.edad;
-      document.getElementById('sexoValue').textContent = paciente.sexo;
-      document.getElementById('telefonoValue').textContent = paciente.telefono;
-      document.getElementById('rfcValue').textContent = paciente.rfc;
-      document.getElementById('alergiasValue').textContent = paciente.alergias;
-    }
-    document.addEventListener('DOMContentLoaded', init);
-  </script>
 
   <script src="app.js"></script>
 </body>
