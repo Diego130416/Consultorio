@@ -229,74 +229,183 @@ function updateDashboardStats() {
   }
 
 // ---------- LÓGICA DE RFC Y EDAD (NUEVA) ----------
-  function calculateAge(birthdate) {
+// ---------- LÓGICA DE RFC Y EDAD (NUEVA) ----------
+// REEMPLAZA EL BLOQUE EXISTENTE (calculateAge y generateRFC) CON ESTE NUEVO BLOQUE
+
+/**
+ * Calcula la edad a partir de la fecha de nacimiento.
+ * @param {string} birthdate - Fecha de nacimiento en formato YYYY-MM-DD.
+ * @returns {number | string} La edad como número o '' si es inválida.
+ */
+function calculateAge(birthdate) {
     if (!birthdate) return '';
     try {
         const today = new Date();
-        const birthDate = new Date(birthdate.replace(/-/g, '/'));
+        // Usar 'T00:00:00' para asegurar que se interprete como fecha local y evitar problemas de zona horaria
+        const birthDate = new Date(birthdate + 'T00:00:00'); 
         let age = today.getFullYear() - birthDate.getFullYear();
         const m = today.getMonth() - birthDate.getMonth();
         if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
             age--;
         }
-        return age;
+        return age >= 0 ? age : ''; // Devuelve '' si la fecha es futura
     } catch(e) {
         return '';
     }
-  }
-  
-  function generateRFC(nombre, paterno, materno, birthdate) {
-    if (!nombre || !paterno || !birthdate) return '';
+}
 
+/**
+ * Función auxiliar para procesar los nombres y apellidos según las reglas del SAT.
+ * Maneja nombres compuestos (José María), artículos (De La O) y excepciones.
+ * @param {string} nombre - Primer nombre(s)
+ * @param {string} paterno - Apellido paterno
+ * @param {string} materno - Apellido materno (opcional)
+ * @returns {string} Los 4 caracteres base del RFC.
+ */
+function getRFCComponents(nombre, paterno, materno) {
+    
+    // 1. Normalización: Quitar acentos, 'Ñ' -> 'X', quitar caracteres especiales, mayúsculas.
     const normalize = (str) => {
+        if (!str) return '';
         return str.toUpperCase()
             .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Quitar acentos
-            .replace(/Ñ/g, 'N')
-            .replace(/[^A-Z]/g, ''); // Dejar solo letras
+            .replace(/Ñ/g, 'X') // El SAT reemplaza Ñ con X
+            .replace(/[^A-Z\s]/g, '') // Quitar caracteres especiales (ej. '.', "'")
+            .replace(/\s+/g, ' ').trim(); // Limpiar espacios múltiples
     };
 
-    const stripPrefixes = (str) => {
-        // Quitar artículos y prefijos comunes
-        return str.replace(/^(DE |LA |LOS |LAS |Y |DEL |MC |MAC |VON |VAN |DI |DAS )/, '');
+    // 2. Listas de artículos, preposiciones y excepciones
+    // Se omiten al inicio del apellido paterno
+    const articles = [
+        'DE', 'LA', 'LAS', 'LOS', 'DEL', 'Y', 'A', 'E', 'EN', 'EL', 
+        'VON', 'VAN', 'DI', 'DA', 'DAS', 'DELLO', 'DELLA', 'DEI', 'DEGLI'
+    ];
+    // Se tratan como parte del apellido (no se saltan)
+    const exceptions = ['MC', 'MAC']; 
+
+    /**
+     * Obtiene la parte significativa de un apellido, saltando artículos.
+     * Ej. "DE LA O" -> "O"
+     * Ej. "MCFLY" -> "MCFLY"
+     * Ej. "YBARRA" -> "YBARRA"
+     */
+    const getSignificantPart = (fullName) => {
+        const parts = (fullName || '').split(' ');
+        if (parts.length === 1) return parts[0];
+        
+        for (let i = 0; i < parts.length; i++) {
+            const part = parts[i];
+            
+            // Manejar excepciones como Mc, Mac (se unen al siguiente)
+            if (exceptions.includes(part)) {
+                return parts.slice(i).join(''); // Ej. McFly -> MCFLY
+            }
+            
+            // Si no es un artículo, esta es la parte significativa
+            if (!articles.includes(part)) {
+                // Retorna desde aquí, uniendo el resto (ej. "GARZA DE LA" -> "GARZA DE LA")
+                return parts.slice(i).join(' '); 
+            }
+        }
+        
+        // Si solo había artículos (ej. "DE LA O"), toma el último
+        if (parts.length > 0) {
+            return parts[parts.length - 1];
+        }
+        return '';
     };
 
+    /**
+     * Obtiene la primera vocal INTERNA del apellido.
+     */
     const getVowel = (str) => {
-        const match = str.substring(1).match(/[AEIOU]/); // Buscar vocal a partir del segundo caracter
+        if (!str) return 'X';
+        // Buscar vocal a partir del segundo caracter
+        const match = str.substring(1).match(/[AEIOU]/); 
         return match ? match[0] : 'X'; // Si no hay vocal, usar X
     };
 
-    const nombres = stripPrefixes(normalize(nombre).split(' ')[0]); // Solo primer nombre
-    const p = stripPrefixes(normalize(paterno));
-    const m = stripPrefixes(normalize(materno));
-
-    let rfc = '';
+    // --- 3. Procesar Apellidos ---
+    const p_norm = normalize(paterno);
+    const m_norm = normalize(materno);
     
-    if (p.length < 3) { // Regla para apellidos cortos (ej. De la O)
-        rfc = (p[0] || 'X') + (m[0] || 'X') + (nombres[0] || 'X') + (nombres[1] || 'X');
+    // Parte significativa del apellido paterno (ej. "O" de "DE LA O")
+    const p_sig_full = getSignificantPart(p_norm);
+    // Tomamos solo la primera palabra de la parte significativa para la vocal
+    const p_sig_first = p_sig_full.split(' ')[0]; 
+    
+    // Para el materno, solo se usa la inicial de la parte significativa
+    const m_sig_full = getSignificantPart(m_norm);
+    const m_initial = m_sig_full ? m_sig_full.charAt(0) : 'X'; // 'X' si no hay apellido materno
+
+    // --- 4. Procesar Nombres (Lógica "José María") ---
+    const nameParts = normalize(nombre).split(' ');
+    // Nombres que se omiten si son el *primero* de un nombre compuesto
+    const skipNames = ['JOSE', 'J', 'MARIA', 'MA']; 
+    
+    let significantName = nameParts[0] || '';
+    
+    // Si el primer nombre es "JOSE" o "MARIA" Y hay un segundo nombre...
+    if (skipNames.includes(significantName) && nameParts.length > 1) {
+        // ... tomar el segundo nombre como el significativo.
+        significantName = nameParts[1]; 
+    }
+    const n_initial = significantName ? significantName.charAt(0) : 'X'; // 'X' si no hay nombre
+
+    // --- 5. Construir Componentes ---
+    let p1, p2;
+
+    // Regla para apellidos paternos de 1 o 2 letras (ej. O, MA)
+    if (p_sig_first.length <= 2) {
+         p1 = p_sig_first.charAt(0) || 'X';
+         p2 = p_sig_first.charAt(1) || 'X'; // Usa la segunda letra, sea vocal o no
     } else {
-        rfc = (p[0] || 'X') + getVowel(p) + (m[0] || 'X') + (nombres[0] || 'X');
-    }
-    
-    // Lista de palabras inconvenientes
-    const badWords = ['BUEI','BUEY','CACA','CACO','CAGA','CAGO','CAKA','COGE','COJA','COJO','CULO','FETO','JOTO','KACA','KACO','KAGA','KAGO','KOGE','KOJO','KULO','MAMO','MEAR','MEAS','MEON','MION','MULA','PEDO','PEDA','PENE','PUTA','PUTO','QULO','RATA','RUIN'];
-    if (badWords.includes(rfc)) {
-        rfc = rfc.slice(0, 3) + 'X'; // Cambiar la última letra por X
+         p1 = p_sig_first.charAt(0);
+         p2 = getVowel(p_sig_first); // Usa la primera vocal interna
     }
 
-    // Formatear fecha
+    // Regla estándar: P1 + V(P) + M1 + N1
+    return p1 + p2 + m_initial + n_initial;
+}
+
+/**
+ * Función principal para generar RFC.
+ * REEMPLAZA LA FUNCIÓN ANTIGUA CON ESTA.
+ */
+function generateRFC(nombre, paterno, materno, birthdate) {
+    if (!nombre || !paterno || !birthdate) return '';
+
+    // 1. Obtener los 4 caracteres base
+    let rfcBase = getRFCComponents(nombre, paterno, materno);
+    
+    // 2. Reemplazar palabras inconvenientes
+    // (Esta lista es comúnmente usada, aunque la oficial del SAT es más extensa y no pública)
+    const badWords = [
+        'BUEI','BUEY','CACA','CACO','CAGA','CAGO','CAKA','COGE','COJA','COJO','CULO',
+        'FETO','JOTO','KACA','KACO','KAGA','KAGO','KOGE','KOJO','KULO','MAMO','MEAR',
+        'MEAS','MEON','MION','MULA','PEDO','PEDA','PENE','PUTA','PUTO','QULO','RATA','RUIN'
+    ];
+    
+    if (badWords.includes(rfcBase)) {
+        rfcBase = rfcBase.slice(0, 3) + 'X'; // Cambiar la última letra por X
+    }
+
+    // 3. Añadir Fecha
     try {
-        const date = new Date(birthdate.replace(/-/g, '/')); // Corregir formato de fecha para Safari/iOS
+        const date = new Date(birthdate + 'T00:00:00'); 
         const yy = date.getFullYear().toString().slice(-2);
         const mm = (date.getMonth() + 1).toString().padStart(2, '0');
         const dd = date.getDate().toString().padStart(2, '0');
-        return rfc + yy + mm + dd;
+        
+        // No generamos homoclave, solo los primeros 10 caracteres
+        return rfcBase + yy + mm + dd; 
     } catch(e) {
-        return rfc; // Devuelve solo la parte de letras si la fecha es inválida
+        console.error("Error al formatear fecha de RFC:", e);
+        return rfcBase; // Devuelve solo la parte de letras si la fecha es inválida
     }
-  }
+}
 
 // ---------- MÓDULO: FORMULARIO DE PACIENTE (MODIFICADO) ----------
-// ---------- REEMPLAZA ESTA FUNCIÓN COMPLETA en app.js ----------
   function initPatientForm() {
     const form = $('patientForm');
     if (!form) return;
@@ -1003,7 +1112,6 @@ function initHistoryPage() {
     let db = loadDB();
     // Compatibilidad: ordenar por fullName (nuevo) o name (antiguo)
     let patients = db.patients.sort((a,b) => (a.fullName || a.name).localeCompare(b.fullName || b.name));
-
     function renderPatientList(patientArray) {
       container.innerHTML = '';
       patientArray.forEach(p => {
@@ -1055,355 +1163,6 @@ function reprintReport(patientId, historyId) {
         return;
     }
     generateReportPrintWindow(patient, historyEvent.data);
-}
-
-function reprintParteMedico(patientId, historyId) {
-    const db = loadDB();
-    const patient = db.patients.find(p => p.id === patientId);
-    const history = (db.histories[patientId] || []);
-    const historyEvent = history.find(h => h.id === historyId);
-
-    if (!patient || !historyEvent) {
-        showMessage('No se pudo encontrar el parte médico en el historial.', 'error');
-        return;
-    }
-    generateParteMedicoPrintWindow(patient, historyEvent.data);
-}
-
-function reprintDiagnosis(patientId, historyId) {
-    const db = loadDB();
-    const patient = db.patients.find(p => p.id === patientId);
-    const history = (db.histories[patientId] || []);
-    const historyEvent = history.find(h => h.id === historyId);
-
-    if (!patient || !historyEvent) {
-        showMessage('No se pudo encontrar el diagnóstico en el historial.', 'error');
-        return;
-    }
-    generateDiagnosisPrintWindow(patient, historyEvent.data);
-}
-
-function reprintStudy(patientId, historyId) {
-    const db = loadDB();
-    const patient = db.patients.find(p => p.id === patientId);
-    const history = (db.histories[patientId] || []);
-    const historyEvent = history.find(h => h.id === historyId);
-
-    if (!patient || !historyEvent) {
-        showMessage('No se pudo encontrar el estudio en el historial.', 'error');
-        return;
-    }
-    generateStudyPrintWindow(patient, historyEvent.data);
-}
-
-function reprintPayment(patientId, historyId) {
-    const db = loadDB();
-    const patient = db.patients.find(p => p.id === patientId);
-    const history = (db.histories[patientId] || []);
-    const historyEvent = history.find(h => h.id === historyId);
-
-    if (!patient || !historyEvent) {
-        showMessage('No se pudo encontrar el registro de pago en el historial.', 'error');
-        return;
-    }
-    generatePaymentPrintWindow(patient, historyEvent.data);
-}
-
-
-function initPatientDetailPage() {
-    const patientNameHeader = $('patientNameHeader');
-    const patientInfoEl = $('patientInfo');
-    const patientHistoryEl = $('patientHistory');
-    const editPatientLink = $('editPatientLink');
-    const createParteMedicoLink = $('createParteMedicoLink');
-    const printHistoryBtn = $('printHistoryBtn');
-    
-    if (!patientInfoEl) return;
-
-    const params = new URL(window.location.href).searchParams;
-    const patientId = params.get('pid');
-    if (!patientId) {
-      patientInfoEl.innerHTML = '<h2>Paciente no especificado</h2>'; return;
-    }
-
-    const db = loadDB();
-    const patient = db.patients.find(p => p.id === patientId);
-    if (!patient) {
-      patientInfoEl.innerHTML = '<h2>Paciente no encontrado</h2>'; return;
-    }
-
-    const history = (db.histories[patientId] || []).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
-    if (patientNameHeader) patientNameHeader.textContent = patient.fullName || patient.name;
-    if (editPatientLink) editPatientLink.href = `paciente.html?edit=${encodeURIComponent(patientId)}`;
-    if (createParteMedicoLink) createParteMedicoLink.href = `parte_medico.html?pid=${encodeURIComponent(patientId)}`;
-    
-    const esc = (s='') => String(s||'');
-
-    let surgeriesHtml = '—';
-    if (Array.isArray(patient.surgeries) && patient.surgeries.length > 0) {
-        surgeriesHtml = '<ul style="margin: 0; padding-left: 20px;">' + patient.surgeries.map(s => 
-            `<li><strong>${s.date || 'Fecha no especificada'}:</strong> ${s.procedure || 'Procedimiento no especificado'}. <em>${s.complication ? 'Complicaciones: ' + s.complication : ''}</em></li>`
-        ).join('') + '</ul>';
-    }
-    
-    // Calcular edad para mostrar
-    const displayAge = patient.age || calculateAge(patient.birthdate);
-
-    const patientInfoHTML = `
-        <div><strong>Edad:</strong> ${esc(displayAge || '—')}</div>
-        <div><strong>Sexo:</strong> ${esc(patient.sex||'—')}</div>
-        <div><strong>Teléfono:</strong> ${esc(patient.phone||'—')}</div>
-        <div><strong>RFC:</strong> ${esc(patient.rfc||'—')}</div>
-        <div style="grid-column: 1 / -1;"><strong>Alergias:</strong> ${(patient.allergies && patient.allergies.length) ? esc(patient.allergies.join(', ')) : '—'}</div>
-        <div style="grid-column: 1 / -1;"><strong>Enfermedades crónicas:</strong> ${(patient.chronic && patient.chronic.length) ? esc(patient.chronic.join(', ')) : '—'}</div>
-        <div style="grid-column: 1 / -1;"><strong>Cirugías Previas:</strong> ${surgeriesHtml}</div>
-        <div style="grid-column: 1 / -1;"><strong>Medicación:</strong> ${(patient.medications && patient.medications.length) ? esc(patient.medications.join(', ')) : '—'}</div>
-        <div style="grid-column: 1 / -1;"><strong>Consumo de sustancias:</strong> ${patient.substance ? (patient.substance + (patient.substanceDetail && patient.substanceDetail.name ? ` — ${patient.substanceDetail.name} (${patient.substanceDetail.frequency || ''})` : '')) : '—'}</div>
-        <div style="grid-column: 1 / -1;"><strong>Motivo de consulta inicial:</strong> ${esc(patient.reason||'—')}</div>
-        <div style="grid-column: 1 / -1;"><strong>Síntomas iniciales:</strong> ${esc(patient.symptoms||'—')}</div>
-    `;
-    patientInfoEl.innerHTML = patientInfoHTML;
-    
-    const formatHistoryDataForDetail = (h) => {
-        const { type, data } = h;
-        if (!data) return '';
-        let content = '';
-        
-        const editBaseUrl = {
-            'Receta emitida': 'receta.html',
-            'Parte Médico': 'parte_medico.html',
-            'Diagnóstico': 'diagnostico.html',
-            'Estudio Médico': 'estudio.html',
-            'Registro de Pago': 'pago.html',
-        };
-        const editUrl = editBaseUrl[type] ? `${editBaseUrl[type]}?edit_hid=${h.id}&pid=${patientId}` : null;
-        const editButton = editUrl ? `<a href="${editUrl}" class="action-chip" style="margin-left: 8px;">Editar</a>` : '';
-
-        switch (type) {
-            case 'Receta emitida': {
-                const medsList = data.medications.map(med => `<li><strong>${esc(med.name)} ${esc(med.dose)}</strong> - ${esc(med.freq)} por ${esc(med.dur)}</li>`).join('');
-                const recommendations = data.recommendations ? `<p style="margin-top:10px;"><strong>Recomendaciones:</strong> ${esc(data.recommendations)}</p>` : '';
-                const reprintButton = `<button class="action-chip primary reprint-rx-btn" data-history-id="${h.id}" style="margin-top:10px;">Reimprimir</button>`;
-                content = `<ul style="margin-top: 8px; padding-left: 20px;">${medsList}</ul>${recommendations}<div>${reprintButton}${editButton}</div>`;
-                break;
-            }
-            case 'Parte Médico': {
-                const reprintButton = `<button class="action-chip primary reprint-parte-btn" data-history-id="${h.id}" style="margin-top:10px;">Reimprimir</button>`;
-                content = `<p><strong>Análisis:</strong> ${esc(data.analysis).substring(0, 100)}...</p><div>${reprintButton}${editButton}</div>`;
-                break;
-            }
-            case 'Diagnóstico': {
-                const reprintButton = `<button class="action-chip primary reprint-diag-btn" data-history-id="${h.id}" style="margin-top:10px;">Reimprimir</button>`;
-                content = `<p><strong>Diagnóstico:</strong> ${esc(data.title)}</p><div>${reprintButton}${editButton}</div>`;
-                break;
-            }
-            case 'Estudio Médico': {
-                const imagePreviews = (data.images || []).map(imgData => `<img src="${imgData}" style="max-width: 100px; max-height: 100px; margin: 5px; border-radius: 4px;" />`).join('');
-                const reprintButton = `<button class="action-chip primary reprint-study-btn" data-history-id="${h.id}" style="margin-top:10px;">Reimprimir</button>`;
-                content = `
-                    <p><strong>Parte del Cuerpo:</strong> ${esc(data.bodyPart)} (${esc(data.date)})</p>
-                    <p><strong>Hallazgos:</strong> ${esc(data.findings).substring(0, 100)}...</p>
-                    <div>${imagePreviews}</div>
-                    <div>${reprintButton}${editButton}</div> 
-                `;
-                break;
-            }
-            case 'Registro de Pago': {
-                const reprintButton = `<button class="action-chip primary reprint-payment-btn" data-history-id="${h.id}" style="margin-top:10px;">Reimprimir</button>`;
-                content = `<p><strong>Concepto:</strong> ${esc(data.concept)}</p><p><strong>Monto:</strong> $${esc(data.amount)} (${esc(data.method)})</p><div>${reprintButton}${editButton}</div>`;
-                break;
-            }
-            case 'Cita agendada':
-            case 'Cita eliminada':
-            case 'Cita finalizada':
-                content = `Fecha: ${data.date}, Hora: ${data.time}`;
-                break;
-            case 'Reagenda':
-                content = `Cita movida de ${data.oldDate} ${data.oldTime} para ${data.newDate} ${data.newTime}.`;
-                break;
-            default:
-                return '';
-        }
-        return `<div>${content}</div>`;
-    };
-
-    const renderHistorySection = (title, events) => {
-        if (!events || events.length === 0) return '';
-        
-        const eventsHtml = events.map(h => {
-            const formattedData = formatHistoryDataForDetail(h);
-            // MODIFICADO: Asegura que 'Registro de Pago' y 'Parte Médico' muestren el título correcto
-            let titleText = h.type;
-            if (h.type === 'Reporte Médico' || h.type === 'Diagnóstico') {
-                titleText = h.data.title;
-            } else if (h.type === 'Estudio Médico') {
-                titleText = h.data.type;
-            } else if (h.type === 'Registro de Pago') {
-                titleText = h.type; // Mantiene "Registro de Pago"
-            } else if (h.type === 'Parte Médico') {
-                titleText = h.type; // Mantiene "Parte Médico"
-            }
-
-            return `<div class="history-entry"><strong>${esc(titleText)}</strong> — ${new Date(h.timestamp).toLocaleString('es-ES',{dateStyle:'full', timeStyle:'short'})}${formattedData}</div>`;
-        }).join('');
-
-        return `<h4 class="history-section-title">${title}</h4>${eventsHtml}`;
-    };
-
-    const prescriptionEvents = history.filter(h => h.type === 'Receta emitida');
-    const reportEvents = history.filter(h => h.type === 'Reporte Médico');
-    const diagnosisEvents = history.filter(h => h.type === 'Diagnóstico');
-    const studyEvents = history.filter(h => h.type === 'Estudio Médico');
-    const paymentEvents = history.filter(h => h.type === 'Registro de Pago');
-    const appointmentEvents = history.filter(h => ['Cita agendada', 'Cita eliminada', 'Cita finalizada', 'Reagenda'].includes(h.type));
-    const adminEvents = history.filter(h => ['Registro inicial', 'Edición'].includes(h.type));
-
-    let historyHtml = [
-        renderHistorySection('Recetas Emitidas', prescriptionEvents),
-        renderHistorySection('Diagnósticos', diagnosisEvents),
-        renderHistorySection('Estudios Médicos', studyEvents),
-        renderHistorySection('Partes Médicos', parteMedicoEvents),
-        renderHistorySection('Registros de Pago', paymentEvents),
-        renderHistorySection('Actividad de Citas', appointmentEvents),
-        renderHistorySection('Actividad Administrativa', adminEvents)
-    ].join('');
-
-    if (!historyHtml.trim()) {
-        historyHtml = '<p>No hay historial de actividad para este paciente.</p>';
-    }
-        
-    patientHistoryEl.innerHTML = `<h3 style="margin-top: 24px; border-top: 1px solid #e2e8f0; padding-top: 16px;">Historial de Actividad</h3>${historyHtml}`;
-    
-    // Event listener unificado para todos los botones de reimpresión
-    patientHistoryEl.addEventListener('click', e => {
-        const target = e.target.closest('button');
-        if (!target || !target.dataset.historyId) return;
-        
-        const historyId = target.dataset.historyId;
-
-        if (target.classList.contains('reprint-rx-btn')) reprintPrescription(patientId, historyId);
-        else if (target.classList.contains('reprint-parte-btn')) reprintParteMedico(patientId, historyId);
-        else if (target.classList.contains('reprint-diag-btn')) reprintDiagnosis(patientId, historyId);
-        else if (target.classList.contains('reprint-study-btn')) reprintStudy(patientId, historyId);
-        else if (target.classList.contains('reprint-payment-btn')) reprintPayment(patientId, historyId);
-    });
-
-    const dangerZoneEl = $('dangerZone');
-    if(dangerZoneEl) dangerZoneEl.style.display = 'block';
-    $('deletePatientBtn')?.addEventListener('click', () => deletePatient(patientId));
-    
-    printHistoryBtn?.addEventListener('click', () => {
-        generateHistoryPrintWindow(patient, history);
-    });
-}
-  
-async function deletePatient(patientId, options = { redirect: true }) {
-    const db = loadDB();
-    const patient = db.patients.find(p => p.id === patientId);
-    if (!patient) return false;
-    const patientName = patient.fullName || patient.name;
-    const confirmed1 = await showConfirm('¿Eliminar Paciente?', `Estás a punto de eliminar a ${patientName}. Se borrará todo su historial y citas.`);
-    if (!confirmed1) return false;
-    const confirmed2 = await showPrompt('Confirmación Final', `Esta acción es PERMANENTE. Para confirmar, escribe "BORRAR ${patientName}".`);
-    if (confirmed2 !== `BORRAR ${patientName}`) {
-      showMessage('La confirmación no coincide. Acción cancelada.', 'warning');
-      return false;
-    }
-    const patientIndex = db.patients.findIndex(p => p.id === patientId);
-    if (patientIndex === -1) return false;
-    const slotsToPotentiallyUnblock = db.appointments.filter(appt => appt.patientId === patientId).map(appt => ({ date: appt.date, time: appt.time }));
-    db.patients.splice(patientIndex, 1);
-    delete db.histories[patientId];
-    db.appointments = db.appointments.filter(appt => appt.patientId !== patientId);
-    slotsToPotentiallyUnblock.forEach(slot => {
-      const isSlotStillUsed = db.appointments.some(appt => appt.date === slot.date && appt.time === slot.time);
-      if (!isSlotStillUsed) {
-        const blockedIndex = db.blockedSlots.findIndex(b => b.date === slot.date && b.time === slot.time);
-        if (blockedIndex > -1) db.blockedSlots.splice(blockedIndex, 1);
-      }
-    });
-    saveDB(db);
-    showMessage(`Paciente ${patientName} y todos sus datos han sido eliminados.`, 'success', 5000);
-    if (options.redirect) {
-      window.location.href = 'historial.html';
-    }
-    return true;
-}
-
-// ---------- MÓDULO DE HISTORIAL Y DETALLE DE PACIENTE ----------
-function initHistoryPage() {
-    const container = $('patientListContainer');
-    if (!container) return;
-    const searchInput = $('patientSearchInput');
-    let db = loadDB();
-    // Compatibilidad: ordenar por fullName (nuevo) o name (antiguo)
-    let patients = db.patients.sort((a,b) => (a.fullName || a.name).localeCompare(b.fullName || b.name));
-
-    function renderPatientList(patientArray) {
-      container.innerHTML = '';
-      patientArray.forEach(p => {
-        const item = document.createElement('a');
-        item.className = 'patient-list-item';
-        item.href = `paciente_full.html?pid=${encodeURIComponent(p.id)}`;
-        item.innerHTML = `
-          <div class="patient-info">
-              <div class="patient-list-name">${p.fullName || p.name}</div>
-              <div class="patient-list-curp"><strong>RFC:</strong> ${p.rfc || 'No registrado'}</div>
-          </div>
-        `;
-        container.appendChild(item);
-      });
-    }
-    
-    searchInput.addEventListener('input', () => {
-      const query = searchInput.value.toLowerCase().trim();
-      renderPatientList(patients.filter(p => (p.fullName || p.name).toLowerCase().includes(query) || (p.rfc && p.rfc.toLowerCase().includes(query))));
-    });
-
-    renderPatientList(patients);
-}
-
-function reprintPrescription(patientId, historyId) {
-    const db = loadDB();
-    const patient = db.patients.find(p => p.id === patientId);
-    const history = (db.histories[patientId] || []);
-    const historyEvent = history.find(h => h.id === historyId);
-
-    if (!patient || !historyEvent) {
-        showMessage('No se pudo encontrar la receta en el historial.', 'error');
-        return;
-    }
-
-    const medications = historyEvent.data.medications;
-    const recommendations = historyEvent.data.recommendations;
-    generatePrintWindow(patient, medications, recommendations);
-}
-
-function reprintReport(patientId, historyId) {
-    const db = loadDB();
-    const patient = db.patients.find(p => p.id === patientId);
-    const history = (db.histories[patientId] || []);
-    const historyEvent = history.find(h => h.id === historyId);
-
-    if (!patient || !historyEvent) {
-        showMessage('No se pudo encontrar el reporte en el historial.', 'error');
-        return;
-    }
-    generateReportPrintWindow(patient, historyEvent.data);
-}
-
-function reprintParteMedico(patientId, historyId) {
-    const db = loadDB();
-    const patient = db.patients.find(p => p.id === patientId);
-    const history = (db.histories[patientId] || []);
-    const historyEvent = history.find(h => h.id === historyId);
-
-    if (!patient || !historyEvent) {
-        showMessage('No se pudo encontrar el parte médico en el historial.', 'error');
-        return;
-    }
-    generateParteMedicoPrintWindow(patient, historyEvent.data);
 }
 
 function reprintDiagnosis(patientId, historyId) {
@@ -1835,7 +1594,6 @@ function initRecetaPage() {
 }
 
 // ---------- MÓDULO DE REPORTES (MODIFICADO) ----------
-// ---------- REEMPLAZA ESTA FUNCIÓN COMPLETA en app.js ----------
 function initReportPage() {
     const btnReportePagos = $('btnReportePagos');
     const btnReporteCitas = $('btnReporteCitas');
@@ -2654,7 +2412,6 @@ function initParteMedicoPage() {
 }
 
 // ---------- REEMPLAZA ESTA FUNCIÓN COMPLETA en app.js (la última definición) ----------
-// ---------- REEMPLAZA LA *ÚLTIMA* FUNCIÓN initPatientDetailPage() EN app.js CON ESTO ----------
 function initPatientDetailPage() {
     const patientNameHeader = $('patientNameHeader');
     const patientInfoEl = $('patientInfo');
@@ -3049,82 +2806,6 @@ function generateHistoryPrintWindow(patient, history) {
     const fullContent = header + mainContent + footer;
     openPrintPreview(`Historial Médico - ${patientName}`, fullContent);
 }
-
-function generateHistoryPrintWindow(patient, history) {
-    const header = getPrintHeader();
-    const footer = getPrintFooter();
-    const esc = (s='') => String(s||'');
-    const patientName = patient.fullName || patient.name;
-    const patientAge = patient.age || calculateAge(patient.birthdate);
-
-    let surgeriesHtml = 'No reportadas';
-    if (Array.isArray(patient.surgeries) && patient.surgeries.length > 0) {
-        surgeriesHtml = '<ul>' + patient.surgeries.map(s => 
-            `<li><strong>${s.date || 'N/A'}:</strong> ${s.procedure || 'N/A'}. <em>${s.complication ? 'Complicaciones: ' + s.complication : ''}</em></li>`
-        ).join('') + '</ul>';
-    }
-    
-    const formatHistoryDataForPrint = (h) => {
-        const { type, data } = h;
-        if (!data) return '';
-        let content = '';
-        switch (type) {
-            case 'Receta emitida':
-                if (data.medications && Array.isArray(data.medications)) {
-                    content = data.medications.map(med => `${med.name} ${med.dose || ''}`).join(', ');
-                }
-                break;
-            case 'Cita agendada': case 'Cita eliminada': case 'Cita finalizada': content = `Fecha: ${data.date}, Hora: ${data.time}`; break;
-            case 'Reagenda': content = `Cita movida de ${data.oldDate} ${data.oldTime} para ${data.newDate} ${data.newTime}.`; break;
-            case 'Parte Médico': content = `Diagnóstico: ${data.diagnostico || data.analysis}`; break;
-            case 'Diagnóstico': content = data.title; break;
-            case 'Estudio Médico': content = `${data.type} de ${data.bodyPart}`; break;
-            case 'Registro de Pago': content = `Monto: $${data.amount} (${data.method})`; break;
-            default: return '';
-        }
-        return `<span>${content}</span>`;
-    };
-
-    const historyHtml = history.length 
-        ? '<ul>' + history.map(h => {
-            let titleText = h.type;
-            if (h.type === 'Reporte Médico' || h.type === 'Diagnóstico') {
-                titleText = h.data.title;
-            } else if (h.type === 'Estudio Médico') {
-                titleText = h.data.type;
-            }
-            return `<li style="margin-bottom: 10px;"><strong>${esc(titleText)}</strong> <span style="font-size: 0.8em; color: #555;">(${new Date(h.timestamp).toLocaleString('es-ES')})</span><br/>${formatHistoryDataForPrint(h)}</li>`
-        }).join('') + '</ul>'
-        : '<p>No hay historial de actividad.</p>';
-
-    const mainContent = `
-        <div class="patient-data">
-            <span><strong>Paciente:</strong> ${patientName}</span>
-        </div>
-        <div>
-            <h3 class="section-title">Datos Personales</h3>
-            <div class="grid">
-                <div><strong>Edad:</strong> ${esc(patientAge || '—')}</div>
-                <div><strong>Sexo:</strong> ${esc(patient.sex || '—')}</div>
-                <div><strong>Teléfono:</strong> ${esc(patient.phone || '—')}</div>
-                <div><strong>RFC:</strong> ${esc(patient.rfc || '—')}</div>
-            </div>
-        </div>
-        <div>
-            <h3 class="section-title">Antecedentes Médicos</h3>
-            <p><strong>Alergias:</strong> ${(patient.allergies && patient.allergies.length) ? esc(patient.allergies.join(', ')) : '—'}</p>
-            <p><strong>Enfermedades Crónicas:</strong> ${(patient.chronic && patient.chronic.length) ? esc(patient.chronic.join(', ')) : '—'}</p>
-            <div><strong>Cirugías Previas:</strong> ${surgeriesHtml}</div>
-        </div>
-        <div>
-            <h3 class="section-title">Historial de Actividad</h3>
-            ${historyHtml}
-        </div>
-    `;
-
-    const fullContent = header + mainContent + footer;
-    openPrintPreview(`Historial Médico - ${patientName}`, fullContent);
-  }
 
   function generateReportPrintWindow(patient, reportData) {
     const header = getPrintHeader();
