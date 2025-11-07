@@ -729,7 +729,7 @@ image_c74c34.png
     const cal = $('calendar');
     if (!cal) return;
 
-    const container = document.querySelector('.container');
+    const container = document.querySelector('.layout-agenda');
     
     const prev = $('prevMonth'), next = $('nextMonth'), monthLabel = $('monthLabel'), yearLabel = $('yearLabel'), selectedDateLabel = $('selectedDateLabel'), eventsCol = $('eventsColumn');
     

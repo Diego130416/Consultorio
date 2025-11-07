@@ -1,6 +1,11 @@
 /* ---------- 1. VARIABLES GLOBALES Y ESTILOS BASE ---------- */
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&display=swap');
+
 :root {
+  /* Nueva Tipografía */
   --font-sans: "Nunito Sans", Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  
+  /* Nueva Paleta de Colores (Azul Marino y Blanco) */
   --primary: #003366;       /* Azul Marino (Navy) */
   --primary-dark: #002244;   /* Marino más oscuro para hover */
   --primary-light: #d6e8ff;  /* Azul pálido para fondos */
@@ -22,6 +27,7 @@
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
   --radius: 10px;
+  --max-width: 1200px;
   --gap: 20px;
   --content-padding: 20px;
   --card-padding: 24px;
@@ -41,17 +47,19 @@
   padding: 0;
 }
 
-html {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+html,
+body {
+  height: 100%;
 }
 
 body {
-  font-family: var(--font-sans);
+  font-family: var(--font-sans); /* <-- APLICAMOS LA NUEVA FUENTE */
   background: var(--bg);
   color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   line-height: 1.5;
-  font-size: 15px; /* Base */
+  font-size: 15px;
   padding: var(--content-padding);
 }
 
@@ -63,7 +71,7 @@ h4,
 h5,
 h6 {
   color: var(--text);
-  font-weight: 600;
+  font-weight: 700; /* Un poco más grueso por la fuente */
   margin-bottom: 0.5rem;
 }
 
@@ -163,6 +171,7 @@ header.header {
   color: var(--white);
 }
 
+/* Responsive header */
 @media (max-width: 980px) {
   body {
     padding: 10px;
@@ -180,10 +189,7 @@ header.header {
 
 /* ---------- 3. DISEÑO DE PÁGINAS (LAYOUTS) ---------- */
 main.container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--gap);
-  max-width: var(--max-width);
+  /* Esta regla genérica ya no se usa, usamos las especializadas */
   margin: 0 auto;
   padding: 0;
   align-items: start;
@@ -191,15 +197,15 @@ main.container {
 
 /* Layout de formulario centrado */
 main.form-container {
-  max-width: 900px;
+  max-width: 800px; /* <-- MODIFICADO: De 900px a 800px */
   margin: 0 auto;
   padding: 0;
 }
 
-/* Responsividad para Layouts */
+/* Responsividad para Layouts (Regla general) */
 @media (max-width: 980px) {
-  main.container {
-    grid-template-columns: 1fr;
+  main.container,
+  main.form-container {
     gap: 16px;
   }
 }
@@ -225,16 +231,15 @@ main.form-container {
   box-shadow: var(--shadow-lg);
 }
 
-/* Altura mínima para layouts 50/50 en escritorio */
-@media (min-width: 981px) {
-  main.container>.card {
-    min-height: 560px;
-  }
+/* Utilidad para anular el efecto hover en tarjetas principales */
+.card.no-hover:hover {
+  transform: none;
+  box-shadow: var(--shadow-sm);
 }
+
 
 /* Botones */
 .btn {
-  display: inline-block;
   padding: 10px 14px;
   height: var(--control-height);
   line-height: calc(var(--control-height) - 2px);
@@ -245,7 +250,7 @@ main.form-container {
   cursor: pointer;
   text-decoration: none;
   text-align: center;
-  transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease;
+  transition: var(--transition-ease);
   background-color: var(--card-bg);
   color: var(--text);
   border-color: var(--border);
@@ -303,17 +308,27 @@ main.form-container {
 /* Formularios */
 fieldset {
   border: 1px solid var(--border);
-  padding: 14px;
+  padding: 1.5rem; /* <-- MODIFICADO: Un poco más de espacio interior */
   border-radius: 8px;
-  background: #fbfbfd;
-  margin-bottom: 1rem;
+  background: #fdfdff; /* <-- AÑADIDO: Fondo sutil para agrupar */
+  margin-bottom: 1.5rem; /* <-- MODIFICADO: Más separación */
 }
 
 legend {
-  font-weight: 600;
-  font-size: 1.05rem;
-  color: var(--text);
+  font-weight: 700; /* <-- MODIFICADO: Más grueso */
+  font-size: 1.1rem; /* <-- MODIFICADO: Ligeramente más grande */
+  color: var(--primary); /* <-- MODIFICADO: Color primario */
   padding: 0 8px;
+  margin-left: 1rem; /* <-- AÑADIDO */
+}
+
+/* --- Estilo para campos obligatorios --- */
+label.required::after,
+legend.required::after {
+  content: " *";
+  color: var(--danger);
+  font-weight: 600;
+  margin-left: 2px;
 }
 
 label {
@@ -343,6 +358,8 @@ select {
 textarea {
   min-height: 120px;
   resize: vertical;
+  padding-top: .6rem;
+  padding-bottom: .6rem;
 }
 
 input:focus,
@@ -362,22 +379,10 @@ select:focus {
 }
 
 /* Utilidades pequeñas */
-.u-hidden {
-  display: none;
-}
-
-.u-text-muted {
-  color: var(--muted);
-}
-
-.u-flex {
-  display: flex;
-}
-
-.u-center {
-  justify-content: center;
-  align-items: center;
-}
+.u-hidden { display: none; }
+.u-text-muted { color: var(--muted); }
+.u-flex { display: flex; }
+.u-center { justify-content: center; align-items: center; }
 
 /* ---------- Layouts de Formulario ---------- */
 .grid-2 {
@@ -466,7 +471,7 @@ select:focus {
   background: #fdfdfd;
 }
 
-/* Modales */
+/* Modales (Alertas) */
 .message {
   position: fixed;
   top: 1.5rem;
@@ -507,6 +512,7 @@ select:focus {
   border-color: #fef3c7;
 }
 
+/* Modales (Confirm, Prompt, Quick) */
 .modal {
   position: fixed;
   inset: 0;
@@ -568,7 +574,7 @@ select:focus {
   padding: 6px;
 }
 
-/* ---------- 5. COMPONENTES ESPECÍFICOS DE PÁGINA ---------- */
+/* ---------- 5. COMPONENTES ESPECÍFICOS DE PÁGINA (Agenda) ---------- */
 /* Calendario (index.html) */
 .sidebar-top {
   padding-bottom: 1rem;
@@ -608,6 +614,7 @@ select:focus {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  transition: var(--transition-ease);
 }
 
 .icon-btn:hover {
@@ -616,7 +623,7 @@ select:focus {
 }
 
 .mini-stats {
-  display: flex;
+  /* display: flex; */ /* (Movido a layout-agenda) */
   flex-direction: column;
   gap: 8px;
   margin-top: 1rem;
@@ -652,11 +659,11 @@ select:focus {
 
 .stat.full-width {
   width: 100%;
-  background-color: #eef6ff;
+  background-color: var(--primary-light);
   padding: 0.75rem;
   border-radius: 0.5rem;
   border-left: 3px solid var(--primary);
-  display: block;
+  /* display: block; */ /* (Movido a layout-agenda) */
 }
 
 .stat.full-width strong {
@@ -698,7 +705,7 @@ select:focus {
   border: 1px solid transparent;
   transition: box-shadow .12s, transform .12s, background-color .12s;
   cursor: pointer;
-  box-sizing: border-box;
+  /* box-sizing: border-box; */ /* (Movido a layout-agenda) */
 }
 
 .cell.otherMonth {
@@ -708,14 +715,14 @@ select:focus {
 }
 
 .cell:not(.otherMonth):hover {
-  background-color: #eef6ff;
-  border-color: var(--primary-light);
+  background-color: var(--primary-light);
+  border-color: #bde4ff;
   transform: translateY(-2px);
   box-shadow: var(--shadow-sm);
 }
 
 .cell.selected {
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  box-shadow: 0 0 0 3px var(--primary-light);
   z-index: 10;
   background-color: #fff;
 }
@@ -758,7 +765,7 @@ select:focus {
 /* Vista Diaria (index.html) */
 .dayview {
   min-height: 420px;
-  overflow-y: auto;
+  /* overflow-y: auto; */ /* (Movido a layout-agenda) */
   position: relative;
   display: flex;
   flex-direction: column;
@@ -772,7 +779,7 @@ select:focus {
   align-items: center;
   border-bottom: 1px solid var(--border);
   padding-bottom: 1rem;
-  flex: 0 0 auto;
+  /* flex: 0 0 auto; */ /* (Movido a layout-agenda) */
 }
 
 .dayview-header h2 {
@@ -947,10 +954,25 @@ select:focus {
 
 /* ---------- 6. NUEVO DISEÑO DE PERFIL DE PACIENTE (paciente_full.html) ---------- */
 
-/* Utilidad para anular el efecto hover en la tarjeta principal */
-.card.no-hover:hover {
-  transform: none;
-  box-shadow: var(--shadow-sm);
+/* Encabezado de la página de detalle */
+.patient-detail-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.patient-detail-header h2 {
+  margin: 0;
+}
+
+.patient-detail-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-shrink: 0;
 }
 
 /* 1. Barra de Información Clave */
@@ -1026,7 +1048,42 @@ select:focus {
 }
 #patientHistory {
   flex-grow: 1;
-  /* Los estilos .history-entry, .history-section-title, etc., ya están definidos y se aplicarán solos */
+}
+
+/* Títulos de sección en el historial (Ej. "Recetas Emitidas") */
+.history-section-title {
+  font-size: 1.125rem;
+  color: var(--text);
+  margin-top: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Estilo para cada entrada en el historial */
+.history-entry {
+  background-color: #fcfdff;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--primary-light);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-top: 0.75rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.history-entry strong {
+  font-size: 1.05rem;
+  color: var(--text);
+  display: inline-block;
+}
+
+.history-entry>strong+span {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-left: 0.5rem;
+}
+
+.history-entry>div {
+  margin-top: 0.5rem;
 }
 
 /* 6. Zona de Peligro (Rediseñada) */
@@ -1052,7 +1109,7 @@ select:focus {
   grid-row: auto; /* Reseteo */
 }
 
-/* 7. Responsividad */
+/* 7. Responsividad (Perfil Paciente) */
 @media (max-width: 980px) {
   .patient-detail-grid {
     grid-template-columns: 1fr; /* Apilar columnas en móvil */
@@ -1069,26 +1126,119 @@ select:focus {
   }
 }
 
-
-/* --- ESTILOS PARA ICONOS DE NAVEGACIÓN (CORREGIDOS) --- */
-.nav-link {
-  display: inline-flex;
-  /* Permite alinear icono y texto */
-  align-items: center;
-  gap: 8px;
-  /* Espacio entre icono y texto */
-}
-
+/* --- ESTILOS PARA ICONOS DE NAVEGACIÓN --- */
 .nav-link i {
   width: 1.2em;
-  /* Da un ancho fijo al icono para alinear el texto */
   text-align: center;
 }
 
-/* --- Estilo para campos obligatorios --- */
-label.required::after {
-  content: " *";
-  color: var(--danger);
-  font-weight: 600;
-  margin-left: 2px;
+
+/* ---------- 7. LAYOUTS ESPECÍFICOS DE PÁGINA (AÑADIDOS) ---------- */
+
+/* --- Layout de Agenda (de index.html) --- */
+.layout-agenda {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  max-width: 1150px;
+  margin: 0 auto; /* Centrado */
+  padding: 0; 
+  align-items: start;
+}
+.layout-agenda aside.card, 
+.layout-agenda section.card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 560px;
+}
+
+/* --- !! ESTA ES LA REGLA QUE ARREGLA TU BUG !! --- */
+/* Le devuelve la altura y el scroll a la vista diaria */
+.layout-agenda .calendar-grid, 
+.layout-agenda .events-column {
+  height: calc(100% - 120px);
+  overflow: auto; /* <-- Esto permite ver el scroll */
+}
+/* --- FIN DE LA REGLA CRÍTICA --- */
+
+.layout-agenda .month-controls, 
+.layout-agenda .dayview-header {
+  flex: 0 0 auto;
+}
+.layout-agenda .mini-stats { 
+  display:flex; flex-direction:column; gap:8px; 
+}
+.layout-agenda .stat.full-width { 
+  display:block; 
+}
+.layout-agenda .calendar-grid .cell { 
+  box-sizing: border-box; 
+}
+
+@media (min-width: 1400px) {
+  .layout-agenda { max-width: 1200px; }
+  .layout-agenda aside.card, 
+  .layout-agenda section.card { min-height: 620px; }
+  .layout-agenda .calendar-grid, 
+  .layout-agenda .events-column { height: calc(100% - 140px); }
+}
+
+@media (max-width: 980px) {
+  .layout-agenda {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin: 10px auto; /* Ajuste para móvil */
+  }
+  .layout-agenda .calendar-grid, 
+  .layout-agenda .events-column {
+    height: auto;
+    max-height: none;
+    overflow: visible; /* Permitir que crezca */
+  }
+  .layout-agenda aside.card, 
+  .layout-agenda section.card { min-height: auto; }
+}
+
+
+/* --- Layout de Reportes (de reporte.html) --- */
+.layout-reporte {
+  max-width: 1150px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+  min-height: 540px;
+}
+.layout-reporte > .card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 480px;
+  height: 100%;
+}
+.layout-reporte .card h3 { font-size: 1.25rem; }
+.layout-reporte fieldset p, 
+.layout-reporte fieldset label { font-size: 1rem; color: var(--muted); }
+
+.layout-reporte #reportResultContainer {
+  flex: 1 1 auto;
+  overflow: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  margin-top: 4px;
+}
+@media (min-width: 1200px) {
+  .layout-reporte .card h3 { font-size: 1.5rem; }
+  .layout-reporte fieldset p, 
+  .layout-reporte fieldset label { font-size: 1.05rem; }
+  .layout-reporte .card { min-height: 560px; }
+}
+@media (max-width: 980px) {
+  .layout-reporte {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .layout-reporte .card { min-height: auto; }
 }

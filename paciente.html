@@ -40,22 +40,27 @@
           <label class="required">Apellido Paterno<input id="paterno" type="text" required /></label>
           <label>Apellido Materno<input id="materno" type="text" /></label>
         </div>
+        
         <div class="grid-2">
           <label class="required">Fecha de Nacimiento<input id="birthdate" type="date" required /></label>
           <label>Edad<input id="age" type="number" min="0" max="130" disabled style="background-color: #eee;" /></label>
         </div>
-        <label>Sexo
-          <select id="sex">
-            <option value="">Seleccione</option>
-            <option>Masculino</option>
-            <option>Femenino</option>
-            <option>Otro</option>
-          </select>
-        </label>
-        <label>Teléfono<input id="phone" type="tel" /></label>
-        <label>RFC (Autogenerado)
-            <input id="rfc" type="text" disabled style="background-color: #eee; color: #555; text-transform: uppercase;" />
-        </label>
+        
+        <div class="grid-3">
+          <label>Sexo
+            <select id="sex">
+              <option value="">Seleccione</option>
+              <option>Masculino</option>
+              <option>Femenino</option>
+              <option>Otro</option>
+            </select>
+          </label>
+          <label>Teléfono<input id="phone" type="tel" /></label>
+          <label>RFC (Autogenerado)
+              <input id="rfc" type="text" disabled style="background-color: #eee; color: #555; text-transform: uppercase;" />
+          </label>
+        </div>
+        
       </fieldset>
       <fieldset>
         <legend>Antecedentes y Motivo de Consulta</legend>
