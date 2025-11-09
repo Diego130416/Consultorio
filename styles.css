@@ -1242,3 +1242,143 @@ select:focus {
   }
   .layout-reporte .card { min-height: auto; }
 }
+
+/* --- (AÑADIDO) Estilo para el enlace del Brand (Logo/Título) --- */
+.brand-link {
+  text-decoration: none; /* Quita el subrayado */
+  color: inherit; /* Hereda el color del texto (no se verá azul) */
+  display: inline-block;
+  transition: var(--transition-ease);
+  border-radius: var(--radius); /* Añade radio para el foco */
+}
+
+.brand-link:hover {
+  transform: scale(1.02); /* Efecto de zoom sutil */
+  opacity: 0.9;
+}
+/* Estilo de foco para accesibilidad */
+.brand-link:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+
+/* --- (AÑADIDO) Estilos Página de Inicio (Nuevo index.html) --- */
+.hero-section {
+  display: grid;
+  grid-template-columns: 350px 1fr; /* Columna fija para la imagen */
+  align-items: center;
+  gap: 2.5rem;
+  padding: 2rem;
+  background-color: var(--card-bg); /* Fondo blanco */
+}
+
+.hero-section .hero-image {
+  width: 100%;
+  height: 450px;
+  object-fit: cover;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+}
+
+.hero-content h2 {
+  font-size: 2.8rem; /* Más grande */
+  color: var(--primary-dark);
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+}
+
+.hero-content .hero-specialty {
+  font-size: 1.3rem;
+  color: var(--primary);
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.hero-content p {
+  font-size: 1.05rem;
+  color: var(--muted);
+  margin-bottom: 2rem;
+  line-height: 1.7;
+  max-width: 600px; /* Mejor legibilidad */
+}
+
+.btn.large {
+  font-size: 1.1rem;
+  padding: 14px 28px;
+  height: auto;
+  font-weight: 700;
+}
+
+.features-section {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gap);
+  margin-top: var(--gap);
+}
+
+.feature-item {
+  text-align: center; /* <-- MODIFICADO: Centrado */
+  padding: 2rem 1.5rem; /* <-- MODIFICADO: Padding restaurado */
+  background-color: var(--card-bg);
+  /* overflow: hidden; (Ya no es necesario) */
+}
+
+.feature-item .feature-image {
+  display: none; /* <-- MODIFICADO: Ocultamos la imagen placeholder */
+}
+
+/* (AÑADIDO) Wrapper circular para el icono */
+.feature-icon-wrapper {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: var(--primary-light); /* Fondo azul pálido */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem auto; /* Centrar y dar espacio */
+}
+
+.feature-item i {
+  display: block; /* <-- MODIFICADO: Volvemos a mostrar el icono */
+  font-size: 2.5rem; /* Tamaño del icono */
+  color: var(--primary); /* Color del icono */
+}
+
+/* Contenido dentro de la tarjeta de feature */
+.feature-item h3 {
+  font-size: 1.3rem;
+  color: var(--primary-dark);
+  margin-top: 0; /* <-- MODIFICADO */
+  margin-bottom: 0.75rem;
+  padding: 0; /* <-- MODIFICADO */
+}
+
+.feature-item p {
+  font-size: 0.95rem;
+  color: var(--muted);
+  line-height: 1.6;
+  padding: 0; /* <-- MODIFICADO */
+}
+
+
+@media (max-width: 980px) {
+  .hero-section {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 1.5rem;
+  }
+  .hero-section .hero-image {
+    max-width: 350px;
+    height: auto;
+    margin: 0 auto;
+  }
+  .hero-content p {
+    max-width: 100%;
+  }
+  .features-section {
+    grid-template-columns: 1fr;
+  }
+}

@@ -3,82 +3,86 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Consultorio — Agenda</title>
+  <title>Consultorio Médico - Dr. Juan Gómez Ojeda</title>
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  
-  </head>
+</head>
 <body>
   <div id="messageBox" class="message" aria-live="polite" style="display:none"></div>
 
   <header class="header">
-    <div class="brand">
-      <img src="Logo.jfif" alt="Logo Consultorio Médico" class="logo-img" />
-      <div>
-      <h1>Consultorio Médico</h1>
-      <p class="subtitle">Agenda e Historial de Pacientes</p>
-    </div>
-    </div>
-<nav class="nav">
-      <a href="index.html" class="nav-link active"><i class="fas fa-calendar-alt"></i><span>Inicio</span></a>
-      <a href="paciente.html" class="nav-link"><i class="fas fa-user-plus"></i><span>Registrar Paciente</span></a>
-      <a href="historial.html" class="nav-link"><i class="fas fa-users"></i><span>Historial</span></a>
-      <a href="receta.html" class="nav-link"><i class="fas fa-prescription-bottle-alt"></i><span>Receta</span></a>
-      <a href="pago.html" class="nav-link"><i class="fas fa-dollar-sign"></i><span>Pago</span></a>
-      <a href="diagnostico.html" class="nav-link"><i class="fas fa-file-medical"></i><span>Diagnóstico</span></a>
-      <a href="estudio.html" class="nav-link"><i class="fas fa-x-ray"></i><span>Estudio</span></a>
-      <a href="reporte.html" class="nav-link"><i class="fas fa-chart-bar"></i><span>Reporte</span></a>
-      <a href="config.html" class="nav-link"><i class="fas fa-cog"></i><span>Configuración</span></a>
+    <!-- AHORA EL BRAND ES UN ENLACE A LA PÁGINA DE INICIO -->
+    <a href="index.html" class="brand-link">
+      <div class="brand">
+        <img src="Logo.jfif" alt="Logo Consultorio Médico" class="logo-img" />
+        <div>
+          <h1>Consultorio Médico</h1>
+          <p class="subtitle">Agenda e Historial de Pacientes</p>
+        </div>
+      </div>
+    </a>
+    
+    <!-- BARRA DE NAVEGACIÓN ACTUALIZADA (CON ICONOS) -->
+    <nav class="nav">
+    <a href="agenda.html" class="nav-link"><i class="fas fa-calendar-alt"></i><span>Agenda</span></a>
+    <a href="paciente.html" class="nav-link"><i class="fas fa-user-plus"></i><span>Registrar Paciente</span></a>
+    <a href="historial.html" class="nav-link"><i class="fas fa-users"></i><span>Historial</span></a>
+    <a href="receta.html" class="nav-link"><i class="fas fa-prescription-bottle-alt"></i><span>Receta</span></a>
+    <a href="pago.html" class="nav-link"><i class="fas fa-dollar-sign"></i><span>Pago</span></a>
+    <a href="diagnostico.html" class="nav-link"><i class="fas fa-file-medical"></i><span>Diagnóstico</span></a>
+    <a href="estudio.html" class="nav-link"><i class="fas fa-x-ray"></i><span>Estudio</span></a>
+    <a href="reporte.html" class="nav-link"><i class="fas fa-chart-bar"></i><span>Reporte</span></a>
+    <a href="config.html" class="nav-link"><i class="fas fa-cog"></i><span>Configuración</span></a>
     </nav>
   </header>
 
-  <main class="layout-agenda">
-    <aside class="card">
-      <div class="sidebar-top">
-        <div class="month-controls">
-          <button id="prevMonth" class="icon-btn" aria-label="Mes anterior">‹</button>
-          <div class="month-info-vertical">
-            <div id="monthLabel" class="month-label">Mes</div>
-            <div id="yearLabel" class="year-label">Año</div>
-          </div>
-          <button id="nextMonth" class="icon-btn" aria-label="Mes siguiente">›</button>
-        </div>
-
-        <div class="mini-stats">
-          <div class="stat-group">
-            <div class="stat"><strong id="todayCount">0</strong><span>Citas de Hoy</span></div>
-            <div class="stat"><strong id="blockedCount">0</strong><span>Bloqueados</span></div>
-          </div>
-          <div class="stat full-width">
-            <strong>Siguiente Cita:</strong>
-            <span id="nextAppt">—</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="weekday-row" role="row">
-        <div>Dom</div><div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sab</div>
-      </div>
-
-      <div id="calendar" class="calendar-grid compact" role="grid" aria-label="Calendario"></div>
-    </aside>
-
-    <section class="card">
-      <div class="dayview-header">
-        <div>
-          <h2 id="selectedDateLabel">Seleccione una fecha</h2>
-          <div id="daySubtitle" class="subtitle">Vista diaria</div>
-        </div>
-      </div>
-
-      <div id="dayView" class="dayview" aria-live="polite">
-        <div id="eventsColumn" class="events-column">
-          <div class="empty">Selecciona una fecha en el calendario para ver los horarios disponibles.</div>
-        </div>
+<main class="form-container" style="max-width: 1100px;">
+    <!-- Sección de Bienvenida (Hero) -->
+    <section class="hero-section card no-hover">
+      <!-- Usamos un placeholder con los colores de tu paleta -->
+      <img src="https://placehold.co/400x450/003366/FFFFFF?text=Dr.+G%C3%B3mez&font=nunito" alt="Foto del Dr. Juan Gómez Ojeda" class="hero-image">
+      <div class="hero-content">
+        <h2>Dr. Juan Gómez Ojeda</h2>
+        <p class="hero-specialty">Especialista en Ortopedia y Traumatología</p>
+        <p>Con más de 15 años de experiencia, mi misión es ayudarte a recuperar tu movilidad y bienestar. Utilizo las técnicas más avanzadas para el diagnóstico y tratamiento de lesiones y padecimientos del sistema musculoesquelético.</p>
+        <a href="agenda.html" class="btn primary large">Ver Agenda y Citas</a>
       </div>
     </section>
-  </main>
 
+    <!-- Sección de Características (ICONOS AÑADIDOS) -->
+    <section class="features-section">
+      
+      <div class="feature-item card">
+        <!-- ICONO AÑADIDO -->
+        <div class="feature-icon-wrapper">
+          <i class="fas fa-bone"></i>
+        </div>
+        <h3>Diagnóstico Preciso</h3>
+        <p>Utilización de estudios de imagen y exploración física detallada para un diagnóstico certero de lesiones deportivas, fracturas y desgaste articular.</p>
+      </div>
+      
+      <div class="feature-item card">
+        <!-- ICONO AÑADIDO -->
+        <div class="feature-icon-wrapper">
+          <i class="fas fa-procedures"></i>
+        </div>
+        <h3>Tratamientos Avanzados</h3>
+        <p>Desde procedimientos mínimamente invasivos y artroscopia hasta reemplazos articulares, aplicando siempre la mejor opción para tu caso.</p>
+      </div>
+      
+      <div class="feature-item card">
+        <!-- ICONO AÑADIDO -->
+        <div class="feature-icon-wrapper">
+          <i class="fas fa-running"></i>
+        </div>
+        <h3>Recuperación Integral</h3>
+        <p>Planes de rehabilitación y seguimiento personalizado para asegurar que recuperes tu funcionalidad completa y vuelvas a tus actividades.</p>
+      </div>
+      
+    </section>
+  </main>
+  
+  <!-- Modales -->
   <div id="quickModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="quickModalTitle">
     <div class="modal-window">
       <button id="closeQuickModal" class="close-btn" aria-label="Cerrar">×</button>
@@ -104,7 +108,7 @@
     </div>
   </div>
 
-<div id="promptModal" class="modal hidden" role="dialog" aria-modal="true">
+  <div id="promptModal" class="modal hidden" role="dialog" aria-modal="true">
     <div class="modal-window">
       <h3 id="promptModalTitle">Ingrese un Valor</h3>
       <p id="promptModalText"></p>
@@ -115,6 +119,7 @@
       </div>
     </div>
   </div>
+
   <script src="app.js"></script>
 </body>
 </html>
