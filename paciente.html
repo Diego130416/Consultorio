@@ -30,6 +30,7 @@
       <a href="estudio.html" class="nav-link"><i class="fas fa-x-ray"></i><span>Estudio</span></a>
       <a href="reporte.html" class="nav-link"><i class="fas fa-chart-bar"></i><span>Reporte</span></a>
       <a href="config.html" class="nav-link"><i class="fas fa-cog"></i><span>Configuración</span></a>
+      <a href="#" id="logoutButton" class="nav-link" style="color: var(--danger);"><i class="fas fa-sign-out-alt"></i><span>Salir</span></a>
     </nav>
   </header>
 
@@ -38,13 +39,13 @@
       <fieldset>
         <legend>Datos Personales</legend>
         <div class="grid-3">
-          <label class="required">Nombre(s)<input id="nombre" type="text" required /></label>
-          <label class="required">Apellido Paterno<input id="paterno" type="text" required /></label>
-          <label>Apellido Materno<input id="materno" type="text" /></label>
+          <label class="required">Nombre(s)<input id="nombre" type="text" placeholder="Ej. Juan Carlos" required /></label>
+          <label class="required">Apellido Paterno<input id="paterno" type="text" placeholder="Ej. Pérez" required /></label>
+          <label>Apellido Materno<input id="materno" type="text" placeholder="Ej. Gómez" /></label>
         </div>
         <div class="grid-2">
           <label class="required">Fecha de Nacimiento<input id="birthdate" type="date" required /></label>
-          <label>Edad<input id="age" type="number" min="0" max="130" disabled style="background-color: #eee;" /></label>
+          <label>Edad<input id="age" type="number" min="0" max="130" disabled style="background-color: #eee;" placeholder="Autocalculado" /></label>
         </div>
         <div class="grid-3">
           <label>Sexo
@@ -55,9 +56,17 @@
               <option>Otro</option>
             </select>
           </label>
-          <label>Teléfono<input id="phone" type="tel" /></label>
+          <label>Teléfono
+            <input 
+              id="phone" 
+              type="tel" 
+              placeholder="Ej. 4421234567" 
+              pattern="[0-9]{10}" 
+              title="El teléfono debe contener 10 dígitos numéricos (solo números)."
+            />
+          </label>
           <label>RFC (Autogenerado)
-              <input id="rfc" type="text" disabled style="background-color: #eee; color: #555; text-transform: uppercase;" />
+              <input id="rfc" type="text" disabled style="background-color: #eee; color: #555; text-transform: uppercase;" placeholder="Autogenerado" />
           </label>
         </div>
       </fieldset>
@@ -75,12 +84,14 @@
         </div>
         <div class="group">
           <div class="group-title">Antecedentes Familiares</div>
-          <textarea id="familyHistory" placeholder="Ej: Padre con hipertensión, Madre con diabetes."></textarea>
+          <textarea id="familyHistory" placeholder="Ej. Padre con hipertensión, Madre con diabetes tipo 2."></textarea>
         </div>
         
         <div class="group">
           <label>¿Ha tenido cirugías previas?
+            <!-- CORRECCIÓN: Añadido "Seleccione" -->
             <select id="surgeriesToggle">
+              <option value="">Seleccione</option>
               <option value="No">No</option>
               <option value="Si">Sí</option>
             </select>
@@ -97,12 +108,12 @@
         </div>
         <div class="group">
           <label class="required">Motivo de la Consulta
-            <textarea id="reason" required></textarea>
+            <textarea id="reason" required placeholder="Ej. Dolor agudo en rodilla derecha tras caída."></textarea>
           </label>
         </div>
         <div class="group">
           <div class="group-title">Síntomas</div>
-          <textarea id="symptoms"></textarea>
+          <textarea id="symptoms" placeholder="Ej. Inflamación, dificultad para caminar, dolor a la palpación."></textarea>
         </div>
         <div class="group">
           <label>¿Consume alguna sustancia?

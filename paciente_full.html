@@ -31,10 +31,12 @@
       <a href="estudio.html" class="nav-link"><i class="fas fa-x-ray"></i><span>Estudio</span></a>
       <a href="reporte.html" class="nav-link"><i class="fas fa-chart-bar"></i><span>Reporte</span></a>
       <a href="config.html" class="nav-link"><i class="fas fa-cog"></i><span>Configuración</span></a>
+      <a href="#" id="logoutButton" class="nav-link" style="color: var(--danger);"><i class="fas fa-sign-out-alt"></i><span>Salir</span></a>
     </nav>
   </header>
 
   <main class="form-container">
+    <!-- Este es el diseño de 2 columnas que ya habías aprobado -->
     <section class="card no-hover"> 
       
       <div class="patient-detail-header">
@@ -54,12 +56,14 @@
         
         <div id="patientInfo" class="patient-antecedentes" aria-live="polite">
           <h3 class="column-title">Antecedentes Médicos</h3>
-          </div>
+          <!-- app.js inyectará 'Alergias', 'Crónicas', etc. aquí -->
+        </div>
         
         <div class="patient-activity-log">
           <h3 class="column-title">Historial de Actividad</h3>
           <div id="patientHistory">
-             </div>
+             <!-- app.js inyectará el historial de recetas, pagos, etc. aquí -->
+          </div>
         </div>
       
       </div> 
@@ -73,6 +77,7 @@
     </section>
   </main>
 
+  <!-- MODALES COMPLETOS (SIN OMITIR NADA) -->
   <div id="confirmModal" class="modal hidden" role="dialog" aria-modal="true">
     <div class="modal-window" style="background:#fff;border-radius:8px;padding:1rem;border:1px solid var(--border);max-width:420px;margin:2rem auto">
       <h3 id="confirmModalTitle">Confirmar Acción</h3>
@@ -95,6 +100,8 @@
       </div>
     </div>
   </div>
+
+  <!-- (El quickModal no es necesario en esta página, lo quitamos) -->
 
   <script src="app.js"></script>
 </body>

@@ -53,7 +53,7 @@ body {
 }
 
 body {
-  font-family: var(--font-sans); /* <-- APLICAMOS LA NUEVA FUENTE */
+  font-family: var(--font-sans);
   background: var(--bg);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
@@ -64,14 +64,9 @@ body {
 }
 
 /* Encabezados */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+h1,h2,h3,h4,h5,h6 {
   color: var(--text);
-  font-weight: 700; /* Un poco más grueso por la fuente */
+  font-weight: 700;
   margin-bottom: 0.5rem;
 }
 
@@ -123,13 +118,13 @@ header.header {
 
 .nav {
   display: flex;
-  gap: 4px; /* Reducimos el espacio */
+  gap: 4px;
   flex-shrink: 0;
   align-items: center;
 }
 
 .nav-link {
-  font-size: 0.9rem; /* Un poco más pequeño */
+  font-size: 0.9rem;
   color: var(--muted);
   text-decoration: none;
   padding: 8px 12px;
@@ -139,13 +134,34 @@ header.header {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  transition: var(--transition-ease); /* Transición suave */
+  transition: var(--transition-ease);
+  position: relative; /* <-- AÑADIDO para el efecto */
+  overflow: hidden; /* <-- AÑADIDO para el efecto */
 }
 
+/* NUEVO: Efecto de barra inferior en el menú */
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: var(--primary);
+  transform: translateX(-101%); /* Inicia fuera de la pantalla */
+  transition: transform 0.3s ease-in-out;
+}
+
+/* --- 3. REEMPLAZA CON ESTO --- */
 .nav-link i {
   width: 1.2em;
   text-align: center;
-  font-size: 1.1em; /* Icono ligeramente más grande */
+  font-size: 1.1em;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1); /* <-- Transición suave */
+}
+
+.nav-link:hover i {
+  transform: scale(1.15); /* <-- Efecto "pop" al pasar el mouse */
 }
 
 .nav-link:focus {
@@ -153,22 +169,32 @@ header.header {
   box-shadow: var(--focus-ring);
 }
 
-/* EFECTO HOVER: Sutil y moderno */
+/* --- 2. REEMPLAZA CON ESTO (Look más limpio) --- */
 .nav-link:hover {
-  background: var(--primary-light);
-  color: var(--primary-dark);
-  transform: translateY(-2px); /* Efecto de elevación */
+  /* background: var(--primary-light); */ /* <-- Quitamos el fondo */
+  color: var(--primary-dark); /* <-- Mantenemos el color de texto */
+  transform: translateY(0);
 }
 
+.nav-link:hover::after {
+  transform: translateX(0);
+}
+
+/* --- 1. REEMPLAZA CON ESTO --- */
 .nav-link.active {
-  background: var(--primary);
-  color: var(--white);
-  box-shadow: var(--shadow-sm);
+  background: transparent; /* <-- Quitamos el fondo azul */
+  color: var(--primary-dark); /* <-- Hacemos el texto azul oscuro */
+  font-weight: 800; /* <-- Lo hacemos más grueso (bold) */
+  box-shadow: none; /* <-- Quitamos la sombra */
+}
+
+.nav-link.active::after {
+  transform: translateX(0); /* <-- Mantenemos el subrayado */
 }
 
 .nav-link.active:hover {
-  background: var(--primary-dark);
-  color: var(--white);
+  background: var(--primary-light); /* <-- Usamos el fondo hover normal */
+  color: var(--primary-dark);
 }
 
 /* Responsive header */
@@ -176,12 +202,10 @@ header.header {
   body {
     padding: 10px;
   }
-
   header.header {
     justify-content: flex-start;
     padding-bottom: 10px;
   }
-
   .brand {
     margin-right: 20px;
   }
@@ -189,7 +213,6 @@ header.header {
 
 /* ---------- 3. DISEÑO DE PÁGINAS (LAYOUTS) ---------- */
 main.container {
-  /* Esta regla genérica ya no se usa, usamos las especializadas */
   margin: 0 auto;
   padding: 0;
   align-items: start;
@@ -197,7 +220,7 @@ main.container {
 
 /* Layout de formulario centrado */
 main.form-container {
-  max-width: 800px; /* <-- MODIFICADO: De 900px a 800px */
+  max-width: 800px; /* Más angosto */
   margin: 0 auto;
   padding: 0;
 }
@@ -222,10 +245,9 @@ main.form-container {
   gap: 18px;
   height: 100%;
   box-shadow: var(--shadow-sm);
-  transition: var(--transition-ease); /* Añadir transición */
+  transition: var(--transition-ease);
 }
 
-/* Efecto de elevación para las tarjetas */
 .card:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-lg);
@@ -236,7 +258,6 @@ main.form-container {
   transform: none;
   box-shadow: var(--shadow-sm);
 }
-
 
 /* Botones */
 .btn {
@@ -270,37 +291,30 @@ main.form-container {
   color: #fff;
   border-color: transparent;
 }
-
 .btn.primary:hover {
   background: var(--primary-dark);
 }
-
 .btn.danger {
   background: var(--danger);
   color: #fff;
   border-color: transparent;
 }
-
 .btn.danger:hover {
   background: var(--danger-dark);
 }
-
 .btn.success {
   background: var(--success);
   color: #fff;
   border-color: transparent;
 }
-
 .btn.success:hover {
   background: var(--success-dark);
 }
-
 .btn:not(.primary):not(.danger):not(.success) {
   background-color: var(--card-bg);
   color: var(--text);
   border-color: var(--border);
 }
-
 .btn:not(.primary):not(.danger):not(.success):hover {
   background-color: #f3f6fb;
 }
@@ -308,21 +322,21 @@ main.form-container {
 /* Formularios */
 fieldset {
   border: 1px solid var(--border);
-  padding: 1.5rem; /* <-- MODIFICADO: Un poco más de espacio interior */
+  padding: 1.5rem; /* Más espacio */
   border-radius: 8px;
-  background: #fdfdff; /* <-- AÑADIDO: Fondo sutil para agrupar */
-  margin-bottom: 1.5rem; /* <-- MODIFICADO: Más separación */
+  background: #fdfdff;
+  margin-bottom: 2rem; /* Más separación */
 }
 
 legend {
-  font-weight: 700; /* <-- MODIFICADO: Más grueso */
-  font-size: 1.1rem; /* <-- MODIFICADO: Ligeramente más grande */
-  color: var(--primary); /* <-- MODIFICADO: Color primario */
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--primary);
   padding: 0 8px;
-  margin-left: 1rem; /* <-- AÑADIDO */
+  margin-left: 1rem;
 }
 
-/* --- Estilo para campos obligatorios --- */
+/* Estilo para campos obligatorios */
 label.required::after,
 legend.required::after {
   content: " *";
@@ -343,16 +357,16 @@ input,
 textarea,
 select {
   width: 100%;
-  padding: var(--control-padding); /* Usamos la variable */
+  padding: var(--control-padding);
   border: 1px solid var(--border);
   border-radius: 8px;
   background-color: var(--white);
   margin-top: 0.25rem;
   transition: var(--transition-ease);
-  font-size: 0.95rem; /* Ligeramente más pequeño */
+  font-size: 0.95rem;
   font-family: var(--font-sans);
   color: var(--text);
-  min-height: var(--control-height); /* Usamos la variable */
+  min-height: var(--control-height);
 }
 
 textarea {
@@ -371,6 +385,14 @@ select:focus {
   background-color: var(--white);
 }
 
+/* Estilo para placeholders */
+::placeholder {
+  color: #aab8c9;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 0.9rem;
+}
+
 .form-actions {
   display: flex;
   justify-content: flex-end;
@@ -378,19 +400,12 @@ select:focus {
   margin-top: 1.5rem;
 }
 
-/* Utilidades pequeñas */
-.u-hidden { display: none; }
-.u-text-muted { color: var(--muted); }
-.u-flex { display: flex; }
-.u-center { justify-content: center; align-items: center; }
-
-/* ---------- Layouts de Formulario ---------- */
+/* Layouts de Formulario */
 .grid-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
 }
-
 .grid-3 {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -401,7 +416,6 @@ select:focus {
 .currency-input {
   position: relative;
 }
-
 .currency-input::before {
   content: '$';
   position: absolute;
@@ -412,7 +426,6 @@ select:focus {
   font-weight: 600;
   pointer-events: none;
 }
-
 .currency-input input[type="number"] {
   padding-left: 34px;
 }
@@ -423,7 +436,6 @@ select:focus {
   flex-wrap: wrap;
   gap: 0.5rem;
 }
-
 .checkbox-item {
   border-radius: 6px;
   border: 1px solid var(--border);
@@ -438,23 +450,19 @@ select:focus {
   margin-bottom: 0;
   user-select: none;
 }
-
 .checkbox-item:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-sm);
   border-color: var(--primary-light);
 }
-
 .checkbox-item input {
   display: none;
 }
-
 .checkbox-item.checked {
   background-color: var(--primary);
   color: #fff;
   border-color: var(--primary);
 }
-
 .checkbox-item span {
   font-weight: 500;
 }
@@ -487,25 +495,21 @@ select:focus {
   text-align: center;
   font-size: 0.95rem;
 }
-
 .message.info {
-  background-color: #f0f9ff; /* Azul muy claro */
+  background-color: #f0f9ff;
   color: #0c4a6e;
   border-color: #e0f2fe;
 }
-
 .message.success {
   background-color: #f0fdf4;
   color: #15803d;
   border-color: #dcfce7;
 }
-
 .message.error {
   background-color: #fef2f2;
   color: #b91c1c;
   border-color: #fee2e2;
 }
-
 .message.warning {
   background-color: #fffbeb;
   color: #b45309;
@@ -523,11 +527,9 @@ select:focus {
   z-index: 1000;
   backdrop-filter: blur(4px);
 }
-
 .modal.hidden {
   display: none;
 }
-
 .modal-window {
   background: var(--card-bg);
   padding: 2rem;
@@ -537,31 +539,26 @@ select:focus {
   box-shadow: var(--shadow-md);
   position: relative;
 }
-
 .modal-window h3 {
   margin-top: 0;
   font-size: 1.25rem;
 }
-
 .modal-window p {
   margin-bottom: 1.25rem;
   color: var(--muted);
 }
-
 .modal-label {
   font-size: 0.9rem;
   margin-bottom: 0.25rem;
   display: block;
   color: var(--text);
 }
-
 .modal-actions {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
   margin-top: 1.5rem;
 }
-
 .close-btn {
   position: absolute;
   top: 0.75rem;
@@ -575,34 +572,28 @@ select:focus {
 }
 
 /* ---------- 5. COMPONENTES ESPECÍFICOS DE PÁGINA (Agenda) ---------- */
-/* Calendario (index.html) */
 .sidebar-top {
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--border);
 }
-
 .month-controls {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 8px;
 }
-
 .month-info-vertical {
   text-align: center;
 }
-
 .month-label {
   font-size: 1.125rem;
   font-weight: 700;
   color: var(--text);
 }
-
 .year-label {
   font-size: 1rem;
   color: var(--muted);
 }
-
 .icon-btn {
   background-color: var(--card-bg);
   border: 1px solid var(--border);
@@ -616,39 +607,32 @@ select:focus {
   justify-content: center;
   transition: var(--transition-ease);
 }
-
 .icon-btn:hover {
   background-color: #f3f6fb;
   transform: translateY(-1px);
 }
-
 .mini-stats {
-  /* display: flex; */ /* (Movido a layout-agenda) */
   flex-direction: column;
   gap: 8px;
   margin-top: 1rem;
 }
-
 .stat-group {
   display: flex;
   gap: 1.25rem;
   align-items: center;
 }
-
 .stat {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   text-align: left;
 }
-
 .stat strong {
   font-size: 1.4rem;
   font-weight: 700;
   line-height: 1;
   color: var(--text);
 }
-
 .stat span {
   font-size: 0.75rem;
   color: var(--muted);
@@ -656,20 +640,16 @@ select:focus {
   letter-spacing: 0.05em;
   margin-top: 0.25rem;
 }
-
 .stat.full-width {
   width: 100%;
   background-color: var(--primary-light);
   padding: 0.75rem;
   border-radius: 0.5rem;
   border-left: 3px solid var(--primary);
-  /* display: block; */ /* (Movido a layout-agenda) */
 }
-
 .stat.full-width strong {
   font-size: 0.95rem;
 }
-
 .stat.full-width span {
   font-size: 0.875rem;
   font-weight: 600;
@@ -677,7 +657,6 @@ select:focus {
   text-transform: none;
   margin-top: 0;
 }
-
 .weekday-row {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -688,14 +667,12 @@ select:focus {
   padding-bottom: 0.5rem;
   font-size: 0.75rem;
 }
-
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 0.4rem;
   flex-grow: 1;
 }
-
 .cell {
   min-height: 72px;
   border-radius: 0.6rem;
@@ -705,33 +682,27 @@ select:focus {
   border: 1px solid transparent;
   transition: box-shadow .12s, transform .12s, background-color .12s;
   cursor: pointer;
-  /* box-sizing: border-box; */ /* (Movido a layout-agenda) */
 }
-
 .cell.otherMonth {
   background-color: transparent;
   opacity: 0.56;
   cursor: default;
 }
-
 .cell:not(.otherMonth):hover {
   background-color: var(--primary-light);
   border-color: #bde4ff;
   transform: translateY(-2px);
   box-shadow: var(--shadow-sm);
 }
-
 .cell.selected {
   box-shadow: 0 0 0 3px var(--primary-light);
   z-index: 10;
   background-color: #fff;
 }
-
 .cell.today .dateChip {
   background-color: var(--primary);
   color: white;
 }
-
 .dateChip {
   width: 28px;
   height: 28px;
@@ -743,7 +714,6 @@ select:focus {
   font-size: 0.82rem;
   margin-bottom: 0.25rem;
 }
-
 .event-dots {
   position: absolute;
   bottom: 6px;
@@ -753,7 +723,6 @@ select:focus {
   gap: 4px;
   justify-content: center;
 }
-
 .dot {
   width: 6px;
   height: 6px;
@@ -761,38 +730,30 @@ select:focus {
   background-color: var(--primary);
   opacity: 0.85;
 }
-
-/* Vista Diaria (index.html) */
 .dayview {
   min-height: 420px;
-  /* overflow-y: auto; */ /* (Movido a layout-agenda) */
   position: relative;
   display: flex;
   flex-direction: column;
   gap: 12px;
   padding-right: 6px;
 }
-
 .dayview-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid var(--border);
   padding-bottom: 1rem;
-  /* flex: 0 0 auto; */ /* (Movido a layout-agenda) */
 }
-
 .dayview-header h2 {
   font-size: 1.25rem;
   margin: 0 0 0.25rem 0;
 }
-
 .events-column {
   padding-top: 0.5rem;
   position: relative;
   flex-grow: 1;
 }
-
 .event-item {
   display: flex;
   gap: 0.75rem;
@@ -804,12 +765,10 @@ select:focus {
   border-left: 4px solid var(--border);
   transition: transform .12s, box-shadow .12s;
 }
-
 .event-item:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-sm);
 }
-
 .event-time {
   width: 60px;
   font-weight: 600;
@@ -818,38 +777,31 @@ select:focus {
   flex-shrink: 0;
   text-align: right;
 }
-
 .event-body {
   flex-grow: 1;
 }
-
 .event-patient {
   font-weight: 700;
   font-size: 0.95rem;
   color: #0b1220;
   cursor: pointer;
 }
-
 .event-note {
   color: var(--muted);
   font-size: 0.85rem;
 }
-
 .event-item.completed {
   opacity: 0.65;
 }
-
 .event-item.completed .event-patient {
   text-decoration: line-through;
   color: var(--muted);
 }
-
 .inline-actions-slot {
   display: flex;
   gap: 0.5rem;
   align-items: center;
 }
-
 .action-chip {
   font-size: 0.78rem;
   padding: 0.28rem 0.625rem;
@@ -861,21 +813,17 @@ select:focus {
   text-decoration: none;
   display: inline-block;
 }
-
 .action-chip:hover {
   opacity: 0.85;
 }
-
 .action-chip.primary {
   background-color: var(--primary-light);
   color: var(--primary-dark);
 }
-
 .action-chip.success {
   background-color: #d1fae5;
   color: #047857;
 }
-
 .action-chip.danger {
   background-color: #fdecea;
   color: #b91c1c;
@@ -889,12 +837,10 @@ select:focus {
   margin-bottom: 1rem;
   gap: 12px;
 }
-
 .patient-list-header h3 {
   margin: 0;
   font-size: 1.05rem;
 }
-
 .patient-list-header input {
   width: 320px;
   margin-top: 0;
@@ -903,7 +849,6 @@ select:focus {
   border-radius: 8px;
   border: 1px solid var(--border);
 }
-
 .patient-list-item {
   display: block;
   text-decoration: none;
@@ -913,20 +858,16 @@ select:focus {
   background: #fff;
   transition: background .12s, transform .12s;
 }
-
 .patient-list-item:hover {
   background-color: #fbfdff;
   transform: translateY(-2px);
 }
-
 .patient-list-item:last-child {
   border-bottom: 0;
 }
-
 .patient-info .patient-list-name {
   font-weight: 700;
 }
-
 .patient-info .patient-list-curp {
   font-size: 0.85rem;
   color: var(--muted);
@@ -938,15 +879,12 @@ select:focus {
     padding: 6px 8px;
     font-size: 0.9rem;
   }
-
   .brand h1 {
     font-size: 1rem;
   }
-
   .currency-input input[type="number"] {
     padding-left: 30px;
   }
-
   .patient-list-header input {
     width: 100%;
   }
@@ -954,7 +892,6 @@ select:focus {
 
 /* ---------- 6. NUEVO DISEÑO DE PERFIL DE PACIENTE (paciente_full.html) ---------- */
 
-/* Encabezado de la página de detalle */
 .patient-detail-header {
   display: flex;
   flex-wrap: wrap;
@@ -964,18 +901,14 @@ select:focus {
   padding-bottom: 1.25rem;
   border-bottom: 1px solid var(--border);
 }
-
 .patient-detail-header h2 {
   margin: 0;
 }
-
 .patient-detail-actions {
   display: flex;
   gap: 0.75rem;
   flex-shrink: 0;
 }
-
-/* 1. Barra de Información Clave */
 .patient-key-info {
   display: flex;
   flex-wrap: wrap;
@@ -995,8 +928,6 @@ select:focus {
   color: var(--primary);
   margin-right: 0.25rem;
 }
-
-/* 2. Grid Principal de Dos Columnas */
 .patient-detail-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1005,8 +936,6 @@ select:focus {
   padding-top: 1.5rem;
   border-top: 1px solid var(--border);
 }
-
-/* 3. Título de Columna */
 .column-title {
   font-size: 1.25rem;
   font-weight: 700;
@@ -1015,8 +944,6 @@ select:focus {
   padding-bottom: 0.5rem;
   border-bottom: 1px solid var(--border);
 }
-
-/* 4. Columna de Antecedentes (Izquierda) */
 .patient-antecedentes {
   display: flex;
   flex-direction: column;
@@ -1040,8 +967,6 @@ select:focus {
   padding-left: 20px;
   margin-top: 5px;
 }
-
-/* 5. Columna de Actividad (Derecha) */
 .patient-activity-log {
   display: flex;
   flex-direction: column;
@@ -1049,8 +974,6 @@ select:focus {
 #patientHistory {
   flex-grow: 1;
 }
-
-/* Títulos de sección en el historial (Ej. "Recetas Emitidas") */
 .history-section-title {
   font-size: 1.125rem;
   color: var(--text);
@@ -1058,8 +981,6 @@ select:focus {
   padding-bottom: 0.5rem;
   border-bottom: 1px solid var(--border);
 }
-
-/* Estilo para cada entrada en el historial */
 .history-entry {
   background-color: #fcfdff;
   border: 1px solid var(--border);
@@ -1069,24 +990,19 @@ select:focus {
   margin-top: 0.75rem;
   box-shadow: var(--shadow-sm);
 }
-
 .history-entry strong {
   font-size: 1.05rem;
   color: var(--text);
   display: inline-block;
 }
-
 .history-entry>strong+span {
   font-size: 0.85rem;
   color: var(--muted);
   margin-left: 0.5rem;
 }
-
 .history-entry>div {
   margin-top: 0.5rem;
 }
-
-/* 6. Zona de Peligro (Rediseñada) */
 .danger-zone {
   margin-top: 2.5rem;
   padding: 1.5rem;
@@ -1105,20 +1021,17 @@ select:focus {
   margin-bottom: 1rem;
 }
 #deletePatientBtn {
-  grid-column: auto; /* Reseteo */
-  grid-row: auto; /* Reseteo */
+  grid-column: auto;
+  grid-row: auto;
 }
-
-/* 7. Responsividad (Perfil Paciente) */
 @media (max-width: 980px) {
   .patient-detail-grid {
-    grid-template-columns: 1fr; /* Apilar columnas en móvil */
+    grid-template-columns: 1fr;
   }
   .patient-key-info {
     flex-direction: column;
     gap: 0.5rem;
   }
-  /* La columna de actividad (derecha) irá debajo */
   .patient-activity-log {
     margin-top: 1.5rem;
     padding-top: 1.5rem;
@@ -1126,7 +1039,6 @@ select:focus {
   }
 }
 
-/* --- ESTILOS PARA ICONOS DE NAVEGACIÓN --- */
 .nav-link i {
   width: 1.2em;
   text-align: center;
@@ -1135,13 +1047,13 @@ select:focus {
 
 /* ---------- 7. LAYOUTS ESPECÍFICOS DE PÁGINA (AÑADIDOS) ---------- */
 
-/* --- Layout de Agenda (de index.html) --- */
+/* --- Layout de Agenda (agenda.html) --- */
 .layout-agenda {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
   max-width: 1150px;
-  margin: 0 auto; /* Centrado */
+  margin: 0 auto;
   padding: 0; 
   align-items: start;
 }
@@ -1152,16 +1064,12 @@ select:focus {
   gap: 14px;
   min-height: 560px;
 }
-
-/* --- !! ESTA ES LA REGLA QUE ARREGLA TU BUG !! --- */
-/* Le devuelve la altura y el scroll a la vista diaria */
+/* Esta es la regla crítica que arregla la vista diaria */
 .layout-agenda .calendar-grid, 
 .layout-agenda .events-column {
   height: calc(100% - 120px);
-  overflow: auto; /* <-- Esto permite ver el scroll */
+  overflow: auto; /* Permite el scroll */
 }
-/* --- FIN DE LA REGLA CRÍTICA --- */
-
 .layout-agenda .month-controls, 
 .layout-agenda .dayview-header {
   flex: 0 0 auto;
@@ -1188,20 +1096,20 @@ select:focus {
   .layout-agenda {
     grid-template-columns: 1fr;
     gap: 14px;
-    margin: 10px auto; /* Ajuste para móvil */
+    margin: 10px auto;
   }
   .layout-agenda .calendar-grid, 
   .layout-agenda .events-column {
     height: auto;
     max-height: none;
-    overflow: visible; /* Permitir que crezca */
+    overflow: visible;
   }
   .layout-agenda aside.card, 
   .layout-agenda section.card { min-height: auto; }
 }
 
 
-/* --- Layout de Reportes (de reporte.html) --- */
+/* --- Layout de Reportes (reporte.html) --- */
 .layout-reporte {
   max-width: 1150px;
   margin: 0 auto;
@@ -1223,7 +1131,7 @@ select:focus {
 .layout-reporte fieldset label { font-size: 1rem; color: var(--muted); }
 
 .layout-reporte #reportResultContainer {
-  flex: 1 1 auto;
+  flex: 0 0 auto;
   overflow: auto;
   padding-top: 12px;
   border-top: 1px solid var(--border);
@@ -1251,19 +1159,17 @@ select:focus {
   transition: var(--transition-ease);
   border-radius: var(--radius); /* Añade radio para el foco */
 }
-
 .brand-link:hover {
   transform: scale(1.02); /* Efecto de zoom sutil */
   opacity: 0.9;
 }
-/* Estilo de foco para accesibilidad */
 .brand-link:focus {
   outline: none;
   box-shadow: 0 0 0 3px var(--primary-light);
 }
 
 
-/* --- (AÑADIDO) Estilos Página de Inicio (Nuevo index.html) --- */
+/* --- (AÑADIDO) Estilos Página de Inicio (index.html) --- */
 .hero-section {
   display: grid;
   grid-template-columns: 350px 1fr; /* Columna fija para la imagen */
@@ -1272,7 +1178,6 @@ select:focus {
   padding: 2rem;
   background-color: var(--card-bg); /* Fondo blanco */
 }
-
 .hero-section .hero-image {
   width: 100%;
   height: 450px;
@@ -1280,7 +1185,6 @@ select:focus {
   border-radius: var(--radius);
   box-shadow: var(--shadow-lg);
 }
-
 .hero-content h2 {
   font-size: 2.8rem; /* Más grande */
   color: var(--primary-dark);
@@ -1288,14 +1192,12 @@ select:focus {
   margin-bottom: 0.5rem;
   line-height: 1.2;
 }
-
 .hero-content .hero-specialty {
   font-size: 1.3rem;
   color: var(--primary);
   font-weight: 600;
   margin-bottom: 1.5rem;
 }
-
 .hero-content p {
   font-size: 1.05rem;
   color: var(--muted);
@@ -1303,66 +1205,54 @@ select:focus {
   line-height: 1.7;
   max-width: 600px; /* Mejor legibilidad */
 }
-
 .btn.large {
   font-size: 1.1rem;
   padding: 14px 28px;
   height: auto;
   font-weight: 700;
 }
-
 .features-section {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--gap);
   margin-top: var(--gap);
 }
-
 .feature-item {
-  text-align: center; /* <-- MODIFICADO: Centrado */
-  padding: 2rem 1.5rem; /* <-- MODIFICADO: Padding restaurado */
+  text-align: center;
+  padding: 2rem 1.5rem;
   background-color: var(--card-bg);
-  /* overflow: hidden; (Ya no es necesario) */
 }
-
 .feature-item .feature-image {
-  display: none; /* <-- MODIFICADO: Ocultamos la imagen placeholder */
+  display: none; /* Ocultamos la imagen placeholder */
 }
-
-/* (AÑADIDO) Wrapper circular para el icono */
 .feature-icon-wrapper {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background-color: var(--primary-light); /* Fondo azul pálido */
+  background-color: var(--primary-light);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 1.5rem auto; /* Centrar y dar espacio */
+  margin: 0 auto 1.5rem auto;
 }
-
 .feature-item i {
-  display: block; /* <-- MODIFICADO: Volvemos a mostrar el icono */
-  font-size: 2.5rem; /* Tamaño del icono */
-  color: var(--primary); /* Color del icono */
+  display: block;
+  font-size: 2.5rem;
+  color: var(--primary);
 }
-
-/* Contenido dentro de la tarjeta de feature */
 .feature-item h3 {
   font-size: 1.3rem;
   color: var(--primary-dark);
-  margin-top: 0; /* <-- MODIFICADO */
+  margin-top: 0;
   margin-bottom: 0.75rem;
-  padding: 0; /* <-- MODIFICADO */
+  padding: 0;
 }
-
 .feature-item p {
   font-size: 0.95rem;
   color: var(--muted);
   line-height: 1.6;
-  padding: 0; /* <-- MODIFICADO */
+  padding: 0;
 }
-
 
 @media (max-width: 980px) {
   .hero-section {
@@ -1381,4 +1271,55 @@ select:focus {
   .features-section {
     grid-template-columns: 1fr;
   }
+}
+
+/* --- ESTILOS PARA LA PÁGINA DE REPORTES --- */
+
+/* * Esto arregla las tarjetas "Total Cobrado" y "Total Facturado"
+ * para que se pongan una al lado de la otra.
+ */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* * Esto arregla la tabla para que se vea ordenada.
+ */
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.report-table th,
+.report-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border); /* Usa tu color de borde (o #e2e8f0) */
+}
+
+.report-table th {
+  background-color: var(--background-alt); /* Usa tu color de fondo (o #f8fafc) */
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  color: var(--text-muted); /* Usa tu color de texto (o #555) */
+}
+
+/* --- 4. AÑADE ESTO AL FINAL DEL ARCHIVO --- */
+
+/* Mejora de Scrollbar del Menú (para Chrome/Safari) */
+header.header::-webkit-scrollbar {
+  height: 6px; /* Hacemos el scroll más delgado */
+}
+header.header::-webkit-scrollbar-track {
+  background: var(--bg); /* Fondo sutil (casi invisible) */
+  border-radius: 10px;
+}
+header.header::-webkit-scrollbar-thumb {
+  background: var(--primary-light); /* Color del scroll */
+  border-radius: 10px;
+}
+header.header::-webkit-scrollbar-thumb:hover {
+  background: var(--primary); /* Color al pasar el mouse */
 }
